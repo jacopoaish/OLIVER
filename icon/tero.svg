@@ -1,20 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" fill="#123E52"/>
-  <circle cx="256" cy="236" r="148" fill="#F2C063"/>
-  <circle cx="256" cy="236" r="110" fill="#F7D488"/>
-  <!-- back and bare right shoulder -->
-  <path d="M86 512 C92 392 150 334 256 330 C362 334 420 392 426 512 Z" fill="#B97A50"/>
-  <!-- robe: covers left shoulder, diagonal edge to the right side -->
-  <path d="M86 512 C92 392 150 334 228 330 L292 334 L412 446 C418 466 424 488 426 512 Z" fill="#E8741C"/>
-  <!-- amaranth folded edge along the diagonal and a few folds -->
-  <path d="M292 334 L412 446 L420 478 L270 346 Z" fill="#9E1F45"/>
-  <path d="M150 512 C160 450 190 400 232 372" fill="none" stroke="#C85A12" stroke-width="7" stroke-linecap="round"/>
-  <path d="M220 512 C228 462 250 420 290 392" fill="none" stroke="#C85A12" stroke-width="7" stroke-linecap="round"/>
-  <path d="M300 512 C306 478 322 452 350 434" fill="none" stroke="#C85A12" stroke-width="6" stroke-linecap="round"/>
-  <!-- neck and shaved head, seen from behind -->
-  <rect x="230" y="276" width="52" height="64" rx="18" fill="#A86C45"/>
-  <ellipse cx="194" cy="246" rx="13" ry="22" fill="#A86C45"/>
-  <ellipse cx="318" cy="246" rx="13" ry="22" fill="#A86C45"/>
-  <ellipse cx="256" cy="236" rx="64" ry="72" fill="#B97A50"/>
-  <path d="M212 200 C224 178 246 168 268 168" fill="none" stroke="#CF956B" stroke-width="10" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1024" height="1024">
+<defs>
+<radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#24314D"/><stop offset="1" stop-color="#111827"/></radialGradient>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".35"/></filter>
+
+<radialGradient id="skin" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#D9A27A"/><stop offset=".55" stop-color="#B57650"/><stop offset="1" stop-color="#7E4A2C"/></radialGradient>
+<linearGradient id="neck" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8E5636"/><stop offset="1" stop-color="#A8693F"/></linearGradient>
+<linearGradient id="robe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF9A3C"/><stop offset=".55" stop-color="#EC7418"/><stop offset="1" stop-color="#B9520C"/></linearGradient>
+<linearGradient id="sash" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C02A5A"/><stop offset="1" stop-color="#6E1130"/></linearGradient>
+<linearGradient id="back" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A4653E"/><stop offset=".6" stop-color="#C58A5F"/><stop offset="1" stop-color="#8A5332"/></linearGradient>
+<linearGradient id="fold" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#B4500B" stop-opacity=".9"/><stop offset="1" stop-color="#B4500B" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="512" height="512" fill="url(#bg)"/>
+<!-- highlighter stroke behind -->
+<rect x="70" y="262" width="372" height="74" rx="12" fill="#DCF04A" transform="rotate(-5 256 299)"/>
+<!-- speech-bubble O as halo -->
+<path d="M152 312 L104 384 L198 342 Z" fill="#FFFFFF"/>
+<circle cx="256" cy="214" r="112" fill="none" stroke="#FFFFFF" stroke-width="40"/>
+<circle cx="420" cy="104" r="22" fill="#93A6FF"/>
+<!-- body -->
+<g filter="url(#soft)">
+<path d="M80 512 C86 392 146 336 256 330 C366 336 426 392 432 512 Z" fill="url(#back)"/>
+<path d="M346 370 C372 392 388 420 396 452" stroke="#7E4A2C" stroke-width="5" fill="none" opacity=".5" stroke-linecap="round"/>
+<path d="M80 512 C86 392 146 336 226 330 L294 334 L414 446 C422 468 428 490 432 512 Z" fill="url(#robe)"/>
+<path d="M120 512 C128 446 160 398 214 366 C190 404 172 452 168 512 Z" fill="url(#fold)" opacity=".55"/>
+<path d="M196 512 C204 458 232 414 278 384 C256 424 244 468 244 512 Z" fill="url(#fold)" opacity=".5"/>
+<path d="M286 512 C292 476 312 446 344 424 C330 456 324 484 326 512 Z" fill="url(#fold)" opacity=".45"/>
+<path d="M150 470 C166 420 196 384 236 360" stroke="#FFB15C" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+<path d="M294 334 L414 446 L424 482 L268 348 Z" fill="url(#sash)"/>
+<path d="M300 346 L404 444" stroke="#E0517B" stroke-width="2.5" opacity=".7"/>
+<path d="M284 352 L414 468" stroke="#5A0E27" stroke-width="2" opacity=".6"/>
+</g>
+<!-- neck, ears, head -->
+<rect x="222" y="282" width="68" height="58" rx="22" fill="url(#neck)"/>
+<ellipse cx="193" cy="228" rx="13" ry="22" fill="#9C6040"/>
+<ellipse cx="319" cy="228" rx="13" ry="22" fill="#9C6040"/>
+<path d="M189 216 C186 226 188 238 194 244" stroke="#6F3F24" stroke-width="2.5" fill="none" opacity=".7"/>
+<path d="M323 216 C326 226 324 238 318 244" stroke="#6F3F24" stroke-width="2.5" fill="none" opacity=".7"/>
+<ellipse cx="256" cy="218" rx="64" ry="74" fill="url(#skin)"/>
+<ellipse cx="236" cy="182" rx="26" ry="16" fill="#F0C29C" opacity=".45" transform="rotate(-25 236 182)"/>
+<path d="M228 282 C246 290 266 290 284 282" stroke="#6F3F24" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/>
 </svg>
