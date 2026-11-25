@@ -1,0 +1,1414 @@
+<title>Oliver</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Oliver, il tuo tutor di inglese: parli, lui ti risponde, ti corregge e ti spiega le regole.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap">
+<style>
+/* Layout: one calm reading column for the conversation, a "notebook" board beside it on wide screens.
+   Identity: ink on paper + a highlighter that marks every correction. */
+:root {
+  --bg: #F1F2EC;
+  --surface: #FFFFFF;
+  --surface-2: #E7E9E1;
+  --ink: #151D2E;
+  --ink-2: #545F73;
+  --line: #D2D6CA;
+  --accent: #2747C8;
+  --accent-soft: #E3E8FB;
+  --mark: #DCF04A;
+  --mark-ink: #151D2E;
+  --bad: #B23A22;
+  --bad-bg: #F7E3DC;
+  --good: #1C7347;
+  --good-bg: #DCEFE3;
+  --shadow: 0 1px 2px rgba(21,29,46,.05), 0 10px 30px rgba(21,29,46,.07);
+  --f-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --r: 16px;
+  --r-sm: 10px;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E121B; --surface: #161C29; --surface-2: #1F2635; --ink: #E9ECF3; --ink-2: #9AA4B8; --line: #2B3344;
+    --accent: #93A6FF; --accent-soft: #1F2747; --mark: rgba(214,240,64,.30); --mark-ink: #F3F7D8;
+    --bad: #FF8F76; --bad-bg: #3A1E18; --good: #62D69D; --good-bg: #13301F;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E121B; --surface: #161C29; --surface-2: #1F2635; --ink: #E9ECF3; --ink-2: #9AA4B8; --line: #2B3344;
+  --accent: #93A6FF; --accent-soft: #1F2747; --mark: rgba(214,240,64,.30); --mark-ink: #F3F7D8;
+  --bad: #FF8F76; --bad-bg: #3A1E18; --good: #62D69D; --good-bg: #13301F;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+html.locked, html.locked body { overflow: hidden; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+.label { font-family: var(--f-display); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.muted { color: var(--ink-2); }
+.wrap { padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+svg.i { width: 20px; height: 20px; flex: none; }
+
+/* ---------- Top bar & tabs ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--bg); }
+.top-in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; gap: 16px; height: 60px; }
+.brand { font-family: var(--f-display); font-weight: 800; font-size: 1.45rem; letter-spacing: -0.03em; background: none; border: 0; padding: 0; display: flex; align-items: center; gap: 2px; color: var(--ink); }
+.brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block; margin-left: 3px; margin-top: 8px; }
+.tabs { margin-left: auto; display: flex; gap: 4px; }
+.tab { display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 8px 14px; border-radius: 999px; color: var(--ink-2); font-weight: 700; transition: background .15s, color .15s; }
+.tab:hover { color: var(--ink); background: var(--surface-2); }
+.tab[aria-current="page"] { color: var(--ink); background: var(--surface); box-shadow: var(--shadow); }
+@media (max-width: 760px) {
+  .top-in { height: 54px; }
+  .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0; justify-content: space-around; gap: 0;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding: 6px var(--gutter-r) calc(6px + env(safe-area-inset-bottom, 0px)) var(--gutter-l); }
+  .tab { flex-direction: column; gap: 2px; font-size: .75rem; padding: 6px 12px; min-width: 72px; border-radius: 12px; }
+  .tab[aria-current="page"] { box-shadow: none; background: var(--surface-2); }
+  main { padding-bottom: 96px !important; }
+}
+
+main { max-width: 1120px; margin: 0 auto; padding-block: 28px 64px; }
+.view { display: grid; gap: 24px; animation: rise .35s ease both; }
+@keyframes rise { from { opacity: .001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ---------- Buttons, chips, cards ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border-radius: 999px; border: 1px solid transparent; font-weight: 700; transition: transform .1s, background .15s, opacity .15s; white-space: nowrap; }
+.btn:active { transform: scale(.97); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary:hover:not([disabled]) { background: var(--accent); color: #fff; }
+.btn.ghost { background: transparent; border-color: var(--line); }
+.btn.ghost:hover:not([disabled]) { background: var(--surface-2); }
+.btn.danger { background: var(--bad-bg); color: var(--bad); }
+.btn.sm { min-height: 36px; padding: 6px 14px; font-size: .9rem; }
+.btn.lg { min-height: 54px; padding: 14px 26px; font-size: 1.05rem; }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; display: grid; place-items: center; }
+.icon-btn:hover { background: var(--surface-2); }
+.link-btn { background: none; border: 0; padding: 4px 2px; color: var(--accent); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; min-height: 32px; }
+.link-btn:hover { text-decoration: underline; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; min-height: 38px; font-size: .93rem; transition: background .15s, border-color .15s; display: inline-flex; align-items: center; gap: 6px; }
+.chip:hover { border-color: var(--ink-2); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip[aria-pressed="true"]::before { content: "✓"; font-size: .8em; }
+.chip-add { display: inline-flex; gap: 6px; }
+.chip-add input { border: 1px dashed var(--line); background: transparent; border-radius: 999px; padding: 7px 14px; min-height: 38px; width: 180px; max-width: 100%; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.card.raised { box-shadow: var(--shadow); border-color: transparent; }
+.card h2 { font-size: 1.25rem; }
+.card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.field { display: grid; gap: 8px; }
+.field > span { font-weight: 700; }
+.input, select.input, textarea.input { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-sm); padding: 10px 12px; min-height: 44px; width: 100%; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.notice { border-radius: var(--r-sm); padding: 14px 16px; background: var(--accent-soft); display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.notice.warn { background: var(--bad-bg); }
+.notice p { flex: 1 1 240px; }
+.empty { border: 1px dashed var(--line); border-radius: var(--r); padding: 22px; color: var(--ink-2); }
+
+/* ---------- Onboarding ---------- */
+.onboard { max-width: 760px; margin: 0 auto; }
+.hello { display: grid; gap: 12px; padding-top: 8px; }
+.hello h1 { font-size: clamp(2.1rem, 6vw, 3.3rem); font-weight: 800; letter-spacing: -0.035em; }
+.hello h1 em { font-style: normal; background: linear-gradient(transparent 58%, var(--mark) 58%); padding: 0 .08em; }
+.hello p { font-size: 1.1rem; max-width: 60ch; color: var(--ink-2); }
+.promise { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.promise div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 14px; display: grid; gap: 4px; }
+.promise strong { font-family: var(--f-display); }
+.promise span { color: var(--ink-2); font-size: .93rem; }
+@media (max-width: 640px) { .promise { grid-template-columns: 1fr; } }
+
+/* ---------- Home ---------- */
+.greet { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.greet h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); font-weight: 800; letter-spacing: -0.03em; }
+.stats { display: flex; gap: 22px; flex-wrap: wrap; }
+.stat { display: grid; }
+.stat b { font-family: var(--f-display); font-size: 1.6rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: .82rem; color: var(--ink-2); }
+.cefr { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 4px; max-width: 420px; }
+.cefr span { text-align: center; font-family: var(--f-display); font-weight: 700; font-size: .85rem; padding: 6px 0; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); }
+.cefr span.on { background: var(--mark); color: var(--mark-ink); }
+.cefr span.past { color: var(--ink); }
+
+.modes { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.mode { text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: var(--r-sm); padding: 12px 14px; display: grid; gap: 3px; transition: border-color .15s, background .15s, transform .1s; min-height: 76px; align-content: start; }
+.mode:hover { border-color: var(--ink-2); }
+.mode:active { transform: scale(.99); }
+.mode strong { font-family: var(--f-display); font-size: 1rem; }
+.mode span { font-size: .86rem; color: var(--ink-2); line-height: 1.35; }
+.mode[aria-checked="true"] { border-color: var(--ink); background: var(--surface); box-shadow: inset 0 0 0 1px var(--ink); }
+.start-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.start-row .field { flex: 1 1 260px; }
+.resume { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--ink); color: var(--bg); border-radius: var(--r); padding: 18px 22px; }
+.resume .btn.primary { background: var(--mark); color: var(--mark-ink); }
+:root[data-theme="dark"] .resume .btn.primary { color: #151D2E; background: #DCF04A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .resume .btn.primary { color: #151D2E; background: #DCF04A; } }
+.resume p { opacity: .8; }
+.list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.list li { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid var(--line); min-width: 0; }
+.list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.list li > .said, .list li > .better { justify-self: start; }
+.said { color: var(--bad); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.better { background: linear-gradient(transparent 55%, var(--mark) 55%); color: var(--ink); font-weight: 700; padding: 0 .1em; }
+.pill { display: inline-block; font-size: .75rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+.pill.review { background: var(--mark); color: var(--mark-ink); }
+
+/* ---------- Session ---------- */
+.session { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; grid-template-rows: auto 1fr auto; padding-top: env(safe-area-inset-top, 0px); }
+.s-head { display: flex; align-items: center; gap: 10px; padding: 8px var(--gutter-r) 8px var(--gutter-l); border-bottom: 1px solid var(--line); background: var(--bg); min-width: 0; }
+.s-title { flex: 1; min-width: 0; display: grid; }
+.s-mode { font-family: var(--f-display); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s-meta { font-size: .82rem; color: var(--ink-2); display: flex; gap: 10px; align-items: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 520px) { #s-board-btn .txt { display: none; } #s-board-btn { padding: 6px 10px; } .s-head { gap: 6px; } .ratio-bar { width: 36px; } }
+.ratio { display: inline-flex; align-items: center; gap: 6px; }
+.ratio-bar { width: 56px; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; display: inline-block; }
+.ratio-bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .4s; }
+.s-body { min-height: 0; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.s-chips svg.i { width: 16px; height: 16px; }
+.s-chat { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scroll-behavior: smooth; }
+.s-msgs { max-width: 760px; margin: 0 auto; padding: 24px var(--gutter-r) 24px var(--gutter-l); display: grid; gap: 26px; }
+.s-board { display: none; }
+@media (min-width: 1100px) {
+  .s-body { grid-template-columns: minmax(0, 1fr) 360px; }
+  .s-board { display: block; border-left: 1px solid var(--line); overflow-y: auto; background: var(--surface); }
+  #s-board-btn { display: none; }
+}
+.board-in { padding: 20px; display: grid; gap: 20px; }
+.board-sec { display: grid; gap: 10px; }
+.board-sec .list li { font-size: .93rem; }
+.sheet { position: fixed; inset: 0; z-index: 60; background: rgba(10,14,22,.45); display: flex; align-items: flex-end; }
+.sheet-panel { background: var(--surface); width: 100%; max-height: 82vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); animation: up .25s ease both; }
+@keyframes up { from { transform: translateY(30px); opacity: .001; } to { transform: none; opacity: 1; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; padding: 14px var(--gutter-r) 0 var(--gutter-l); }
+
+.msg { display: grid; gap: 10px; animation: rise .3s ease both; min-width: 0; }
+.msg.me { justify-items: end; }
+.bubble { background: var(--surface-2); border-radius: 18px 18px 4px 18px; padding: 10px 16px; max-width: min(560px, 88%); white-space: pre-wrap; overflow-wrap: anywhere; }
+.who { display: flex; align-items: center; gap: 8px; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-family: var(--f-display); font-weight: 800; font-size: .85rem; flex: none; }
+.avatar.talking { box-shadow: 0 0 0 4px var(--mark); }
+.reply { font-size: 1.08rem; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ask { display: grid; gap: 4px; }
+.ask .label { color: var(--accent); }
+.ask p { font-size: 1.12rem; font-weight: 700; line-height: 1.45; }
+.note { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-sm); padding: 12px 14px; display: grid; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
+.note .row { display: grid; gap: 2px; }
+.note .k { font-size: .78rem; font-weight: 700; color: var(--ink-2); }
+.note.fix { border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+.note.sound .ipa { font-family: 'Charis SIL', 'Doulos SIL', 'Gentium Plus', 'Lucida Sans Unicode', 'Segoe UI', var(--f-body); }
+.note.lesson { background: var(--accent-soft); border-color: transparent; white-space: pre-wrap; }
+.note.nlp { border-style: dashed; }
+.msg-actions { display: flex; gap: 4px; flex-wrap: wrap; margin-left: -6px; }
+.msg-actions button { background: none; border: 0; color: var(--ink-2); font-weight: 700; font-size: .85rem; padding: 6px 8px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; min-height: 34px; }
+.msg-actions button:hover { background: var(--surface-2); color: var(--ink); }
+.msg-actions svg.i { width: 16px; height: 16px; }
+.thinking { display: inline-flex; gap: 5px; padding: 8px 0; }
+.thinking i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-2); animation: blink 1.2s infinite; }
+.thinking i:nth-child(2) { animation-delay: .2s; } .thinking i:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.err { color: var(--bad); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.s-foot { border-top: 1px solid var(--line); background: var(--bg); padding: 10px var(--gutter-r) calc(10px + env(safe-area-inset-bottom, 0px)) var(--gutter-l); }
+.s-foot-in { max-width: 760px; margin: 0 auto; display: grid; gap: 8px; }
+.s-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.s-chips::-webkit-scrollbar { display: none; }
+.s-chips .chip { flex: none; min-height: 34px; padding: 5px 12px; font-size: .86rem; }
+.s-chips .chip[aria-pressed="true"]::before { content: none; }
+.composer { display: flex; align-items: flex-end; gap: 10px; }
+.composer textarea { flex: 1; min-width: 0; resize: none; border: 1px solid var(--line); background: var(--surface); border-radius: 22px; padding: 11px 16px; min-height: 48px; max-height: 160px; line-height: 1.45; }
+.composer textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.mic { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--ink); color: var(--bg); display: grid; place-items: center; flex: none; position: relative; transition: transform .1s, background .15s; }
+.mic svg.i { width: 24px; height: 24px; }
+.mic:active { transform: scale(.94); }
+.mic.on { background: var(--accent); color: #fff; }
+.mic.on::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 3px solid var(--accent); opacity: .5; animation: pulse 1.4s ease-out infinite; }
+@keyframes pulse { from { transform: scale(.9); opacity: .6; } to { transform: scale(1.25); opacity: 0; } }
+.send { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; flex: none; }
+.send:not([disabled]):hover { background: var(--ink); color: var(--bg); }
+.send[disabled] { opacity: .4; cursor: not-allowed; }
+.s-partial { font-style: italic; color: var(--ink-2); padding: 0 4px; min-height: 1.4em; overflow-wrap: anywhere; }
+.s-status { font-size: .85rem; color: var(--ink-2); display: flex; gap: 10px; align-items: center; min-height: 28px; flex-wrap: wrap; }
+.s-status .link-btn { min-height: 28px; }
+.hint { font-size: .82rem; color: var(--ink-2); }
+
+/* ---------- Report ---------- */
+.report { max-width: 820px; margin: 0 auto; width: 100%; }
+.report-hero { display: grid; gap: 8px; }
+.report-hero h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 800; letter-spacing: -0.03em; }
+.well { display: grid; gap: 10px; counter-reset: w; margin: 0; padding: 0; list-style: none; }
+.well li { display: flex; gap: 12px; align-items: flex-start; }
+.well li::before { content: "✓"; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--good-bg); color: var(--good); display: grid; place-items: center; font-weight: 700; font-size: .85rem; }
+.words { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.word { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; display: grid; gap: 4px; background: var(--surface); align-content: start; min-width: 0; overflow-wrap: anywhere; }
+.word strong { font-family: var(--f-display); font-size: 1.05rem; }
+.word .ex { font-style: italic; color: var(--ink-2); font-size: .93rem; }
+.word-head { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+pre.profile { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surface-2); border-radius: var(--r-sm); padding: 14px 16px; margin: 0; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: .85rem; line-height: 1.6; }
+.loading-block { display: grid; gap: 12px; }
+.shimmer { height: 16px; border-radius: 8px; background: linear-gradient(90deg, var(--surface-2), var(--surface), var(--surface-2)); background-size: 200% 100%; animation: sh 1.4s infinite linear; }
+@keyframes sh { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ---------- Notebook & profile ---------- */
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 4px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: none; padding: 8px 14px; border-radius: 999px; font-weight: 700; color: var(--ink-2); min-height: 38px; }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.seg .n { font-variant-numeric: tabular-nums; opacity: .7; margin-left: 4px; font-weight: 400; }
+details.sess { border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); }
+details.sess > summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+details.sess > summary::-webkit-details-marker { display: none; }
+details.sess > div { padding: 0 16px 16px; display: grid; gap: 16px; }
+.switch { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.switch:last-child { border-bottom: 0; }
+.switch .t { display: grid; }
+.switch .t small { color: var(--ink-2); }
+.toggle { appearance: none; -webkit-appearance: none; width: 48px; height: 28px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); position: relative; flex: none; cursor: pointer; transition: background .15s; margin: 0; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink-2); transition: transform .15s, background .15s; }
+.toggle:checked { background: var(--accent); border-color: var(--accent); }
+.toggle:checked::after { transform: translateX(20px); background: #fff; }
+input[type="range"] { accent-color: var(--accent); width: 160px; max-width: 100%; }
+details.prompt summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+details.prompt pre { max-height: 360px; overflow: auto; }
+
+/* ---------- Toast & dialog ---------- */
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(110px + env(safe-area-inset-bottom, 0px)); z-index: 90; background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; transition: opacity .2s, transform .2s; }
+#toast[hidden] { display: none !important; }
+dialog { border: 0; border-radius: var(--r); padding: 24px; max-width: min(440px, calc(100% - 32px)); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(10,14,22,.5); }
+dialog h2 { font-size: 1.25rem; margin-bottom: 8px; }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+</style>
+
+<header class="top">
+  <div class="top-in wrap">
+    <button class="brand" id="brand" aria-label="Oliver, vai a Oggi">Oliver<span class="brand-dot"></span></button>
+    <nav class="tabs" id="tabs" aria-label="Sezioni" hidden>
+      <button class="tab" data-view="home"></button>
+      <button class="tab" data-view="notebook"></button>
+      <button class="tab" data-view="profile"></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <section class="view onboard" id="v-onboard" hidden></section>
+  <section class="view" id="v-home" hidden></section>
+  <section class="view" id="v-notebook" hidden></section>
+  <section class="view" id="v-profile" hidden></section>
+  <section class="view report" id="v-report" hidden></section>
+</main>
+
+<div class="session" id="v-session" hidden>
+  <header class="s-head">
+    <button class="icon-btn" id="s-exit" aria-label="Esci (la sessione resta salvata)"></button>
+    <div class="s-title">
+      <div class="s-mode" id="s-mode"></div>
+      <div class="s-meta">
+        <span id="s-timer">0:00</span>
+        <span class="ratio" title="Quanto hai parlato tu rispetto a Oliver"><span class="ratio-bar"><i id="s-ratio-bar"></i></span><span id="s-ratio">Tu 0%</span></span>
+      </div>
+    </div>
+    <button class="btn ghost sm" id="s-board-btn" aria-label="Appunti della sessione"><span class="txt">Appunti</span> <span class="pill" id="s-board-count">0</span></button>
+    <button class="btn primary sm" id="s-end">Termina</button>
+  </header>
+  <div class="s-body">
+    <div class="s-chat" id="s-chat"><div class="s-msgs" id="s-msgs" aria-live="polite"></div></div>
+    <aside class="s-board" id="s-board" aria-label="Appunti della sessione"></aside>
+  </div>
+  <footer class="s-foot">
+    <div class="s-foot-in">
+      <div class="s-chips" id="s-chips"></div>
+      <div class="s-partial" id="s-partial" hidden></div>
+      <div class="composer">
+        <button class="mic" id="mic" aria-label="Parla in inglese"></button>
+        <textarea id="input" rows="1" placeholder="Parla o scrivi in inglese…" aria-label="Il tuo messaggio in inglese"></textarea>
+        <button class="send" id="send" aria-label="Invia" disabled></button>
+      </div>
+      <div class="s-status" id="s-status" aria-live="polite"></div>
+    </div>
+  </footer>
+</div>
+
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="dlg"><h2 id="dlg-title"></h2><p id="dlg-text" class="muted"></p><div class="dlg-actions" id="dlg-actions"></div></dialog>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= Helpers ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const h = (tag, attrs, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+};
+const ICONS = {
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  send: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  stop: '<rect x="7" y="7" width="10" height="10" rx="2"/>',
+  speaker: '<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+  back: '<path d="M15 18l-6-6 6-6"/>',
+  today: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  why: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01"/>',
+  it: '<path d="M4 5h7M7.5 3v2M5.5 5c0 4 2.5 7 6 8M10 5c-.5 3-3 6-6 8"/><path d="M13 21l4-10 4 10M14.5 17.5h5"/>',
+};
+const icon = (name) => {
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor');
+  s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round');
+  s.setAttribute('class', 'i'); s.setAttribute('aria-hidden', 'true');
+  s.innerHTML = ICONS[name] || '';
+  return s;
+};
+const LS = {
+  get(k) { try { const v = localStorage.getItem('oliver:' + k); return v ? JSON.parse(v) : null; } catch { return null; } },
+  set(k, v) { try { localStorage.setItem('oliver:' + k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem('oliver:' + k); } catch {} },
+};
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), ms))]);
+const dayKey = (d) => { const x = new Date(d); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+const words = (s) => (String(s || '').trim().match(/\S+/g) || []).length;
+const fmtDate = (t) => new Date(t).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' });
+const fmtClock = (ms) => { const s = Math.floor(ms / 1000); const m = Math.floor(s / 60); return m + ':' + String(s % 60).padStart(2, '0'); };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const asList = (v) => Array.isArray(v) ? v.filter(Boolean).map(String) : (v ? [String(v)] : []);
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3400);
+}
+function confirmDialog({ title, text, ok, cancel = 'Annulla', danger }) {
+  return new Promise((resolve) => {
+    const d = $('#dlg');
+    $('#dlg-title').textContent = title; $('#dlg-text').textContent = text || '';
+    const done = (v) => { d.close(); resolve(v); };
+    $('#dlg-actions').replaceChildren(
+      h('button', { class: 'btn ghost', onclick: () => done(false) }, cancel),
+      h('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), onclick: () => done(true) }, ok),
+    );
+    d.onclose = () => resolve(false);
+    try { d.showModal(); } catch { resolve(false); }
+  });
+}
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); toast('Copiato'); }
+  catch {
+    const pre = btn && btn.closest('.card') && btn.closest('.card').querySelector('pre');
+    if (pre) { const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Testo selezionato: copialo con Ctrl+C'); }
+    else toast('Non riesco a copiare da qui');
+  }
+}
+
+/* ================= Platform capabilities ================= */
+const C = window.claude;
+const use = (name) => (C && typeof C.use === 'function') ? C.use(name).catch(() => null) : Promise.resolve(null);
+const Caps = { sample: null, dictation: null, tts: null, perms: null, ready: false };
+let capsPromise = null;
+function initCaps() {
+  if (capsPromise) return capsPromise;
+  capsPromise = Promise.all(['sample', 'dictation', 'tts', 'permissions'].map(use)).then(([s, d, t, p]) => {
+    Caps.sample = s; Caps.dictation = d; Caps.tts = t; Caps.perms = p; Caps.ready = true;
+    setupDictation(); setupTts();
+  });
+  return capsPromise;
+}
+
+/* ================= Storage (private per viewer) ================= */
+const Store = {
+  db: null, base: null, chains: {},
+  async init() {
+    const [db, user] = await Promise.all([use('db'), use('user')]);
+    let id = null;
+    try { id = user ? await user.id() : null; } catch {}
+    if (db && id) { this.db = db; this.base = 'data/users/' + id; }
+  },
+  get remote() { return !!this.db; },
+  ser(key, fn) {
+    const next = (this.chains[key] || Promise.resolve()).catch(() => {}).then(fn);
+    this.chains[key] = next; return next;
+  },
+  async getDoc(name) {
+    if (!this.db) return LS.get(name);
+    const snap = await withTimeout(this.db.doc(this.base + '/' + name).get(), 10000);
+    return snap.exists ? clone(snap.data()) : null;
+  },
+  setDoc(name, data) {
+    LS.set(name, data);
+    if (!this.db) return Promise.resolve();
+    const body = clone(data);
+    return this.ser(name, () => this.db.doc(this.base + '/' + name).set(body)).catch((e) => {
+      if (e && e.code === 'quota_exceeded') toast('Spazio pieno: cancella qualche sessione vecchia dal Profilo.');
+      else toast('Salvataggio non riuscito: riproverò al prossimo messaggio.');
+    });
+  },
+  delDoc(name) {
+    LS.del(name);
+    if (!this.db) return Promise.resolve();
+    return this.ser(name, () => this.db.doc(this.base + '/' + name).delete()).catch(() => {});
+  },
+  sessionsCol() { return this.db.doc(this.base + '/profile').collection('sessions'); },
+  async addSession(s) {
+    const list = LS.get('sessions') || []; list.unshift(s); LS.set('sessions', list.slice(0, 150));
+    if (!this.db) return;
+    await this.sessionsCol().doc(s.id).set(clone(s));
+  },
+  async listSessions() {
+    if (!this.db) return LS.get('sessions') || [];
+    const q = await withTimeout(this.sessionsCol().orderBy('endedAt', 'desc').limit(150).get(), 10000);
+    const list = q.docs.map((d) => clone(d.data()));
+    LS.set('sessions', list); return list;
+  },
+  async wipe() {
+    if (this.db) {
+      try { const q = await this.sessionsCol().get(); for (const d of q.docs) await this.sessionsCol().doc(d.id).delete(); } catch {}
+      try { await this.db.doc(this.base + '/current').delete(); } catch {}
+      try { await this.db.doc(this.base + '/profile').delete(); } catch {}
+    }
+    ['profile', 'current', 'sessions'].forEach(LS.del);
+  },
+};
+
+/* ================= App state ================= */
+const DEFAULT_SETTINGS = { voiceOn: true, voice: 'buttery', rate: 1, autoSend: true, readAll: false, accurate: false, correction: 'normal' };
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const GOALS = ['Riunioni di lavoro', 'Colloqui di lavoro', 'Viaggi', 'Small talk', 'Presentazioni', 'Conversazioni profonde', 'Esami (IELTS, TOEFL…)'];
+const INTERESTS = ['tech', 'football', 'cooking', 'spirituality', 'physics', 'chemistry', 'theosophy', 'English grammar', 'astrology', 'astrophysics', 'neuro-linguistic programming', 'deep conversations'];
+const MODES = [
+  { id: 'free', name: 'Conversazione libera', desc: 'La tua vita, le tue idee, i tuoi interessi.', line: () => 'free talk: my life, interests, opinions.' },
+  { id: 'role', name: 'Role play', desc: 'Oliver interpreta l’altra persona in una situazione reale.',
+    detail: { label: 'Situazione', ph: 'es. colloquio per un lavoro nel tech', sugg: ['Colloquio di lavoro', 'Call con un cliente', 'Negoziazione', 'Al ristorante', 'Dal medico', 'Check-in in hotel'] },
+    line: (d) => `role play: ${d || 'a realistic situation you choose from my goals'}. Play the other person realistically; corrections and rules come after your in-character [REPLY].` },
+  { id: 'debate', name: 'Dibattito', desc: 'Oliver prende la posizione opposta e ti mette alla prova.',
+    detail: { label: 'Tema (facoltativo)', ph: 'lascia vuoto e lo sceglie Oliver', sugg: ['L’AI ci rende più creativi?', 'Astrologia: simbolo o scienza?', 'Lavoro da remoto', 'Colonizzare Marte'] },
+    line: (d) => `debate on: ${d || 'a thought-provoking topic you pick from my interests'}. Take the opposite side and push back on my arguments.` },
+  { id: 'story', name: 'Racconto', desc: 'La tua giornata o un ricordo: focus sui tempi passati.', line: () => 'story: I tell you about my day or a past event; focus on past tenses.' },
+  { id: 'grammar', name: 'Grammatica', desc: 'Una mini-lezione, poi la usi subito parlando.',
+    detail: { label: 'Argomento (facoltativo)', ph: 'es. present perfect', sugg: ['Present perfect vs past simple', 'Conditionals', 'Since / for', 'Make vs do', 'Phrasal verbs', 'Articoli'] },
+    line: (d) => `grammar ${d || '(pick a topic from my RULES TO REVIEW or recurring errors)'}: start with a short [LESSON], then make me practise it in conversation.` },
+  { id: 'drill', name: 'Drill', desc: 'I tuoi errori più frequenti, una frase alla volta.', line: () => 'drill: take my most frequent errors from my profile (or typical Italian-speaker errors if there is no profile yet), remind me of the rule, and give me 5 sentences to say correctly, one at a time.' },
+  { id: 'nlp', name: 'Laboratorio PNL', desc: 'Conversazione profonda sugli schemi della PNL, in inglese.', line: () => 'NLP lab: a deep conversation exploring neuro-linguistic programming patterns (meta-model questions, reframing, presuppositions, sensory predicates, modal operators, Milton-model language, anchoring) through English. Teach one pattern at a time with [NLP], have me use it in English, and keep correcting my English as usual.' },
+];
+const modeById = (id) => MODES.find((m) => m.id === id) || MODES[0];
+const CORRECTION = { normal: 'Correzioni: normali', strict: 'Correzioni: tutte', flow: 'Correzioni: a fine sessione' };
+
+const state = { profile: null, sessions: [], session: null, view: 'home', busy: false, ctl: null, homeMode: 'free', homeDetail: '', nbTab: 'errors', ob: null };
+const settings = () => Object.assign({}, DEFAULT_SETTINGS, (state.profile && state.profile.settings) || {});
+function saveProfile() { if (state.profile) return Store.setDoc('profile', state.profile); }
+function setSetting(k, v) { state.profile.settings = Object.assign({}, settings(), { [k]: v }); saveProfile(); }
+
+/* ================= Tutor prompt ================= */
+function lpText(lp) {
+  if (!lp) return 'none';
+  const j = (a) => asList(a).join('; ') || '-';
+  return `LEARNER PROFILE\nLEVEL: ${lp.level || '-'}\nRECURRING ERRORS: ${j(lp.recurringErrors)}\nRULES LEARNED: ${j(lp.rulesLearned)}\nRULES TO REVIEW: ${j(lp.rulesToReview)}\nWORDS IN PROGRESS: ${j(lp.wordsInProgress)}\nTOPICS DONE: ${j(lp.topicsDone)}\nNEXT FOCUS: ${lp.nextFocus || '-'}`;
+}
+function buildRules(sess) {
+  const p = state.profile || {};
+  const st = settings();
+  const mode = modeById(sess ? sess.mode : 'free');
+  const corr = (sess && sess.correction) || st.correction;
+  const corrLine = corr === 'strict' ? 'strict mode: correct every error with its rule (no limit on [FIX]).'
+    : corr === 'flow' ? 'flow mode: no corrections during the conversation (no [FIX], no [NATURAL]); just keep me talking. Corrections come in the end-of-session report.'
+    : 'normal: max 2 corrections per turn.';
+  const level = p.level && p.level !== 'unknown' ? p.level : 'unknown: assess me in the first few minutes and tell me my estimated CEFR level';
+  return `You are "Oliver", my personal English conversation tutor. I'm an Italian native speaker. Your goal: make me fluent AND accurate in spoken English as fast as possible, through real conversation, and make me understand the grammar behind my mistakes so I stop repeating them. Through our conversations you also coach my articulation and my conversation skills, and you teach me neuro-linguistic programming (NLP) concepts through English.
+
+## About me
+- Native language: Italian
+- Level: ${level}
+- Goals: ${asList(p.goals).join(', ') || 'not specified yet: ask me'}
+- Interests: ${asList(p.interests).join(', ') || 'not specified yet: ask me'}
+- Learner profile from previous sessions:
+${lpText(p.lp)}
+
+## How every reply works
+1. First, respond to WHAT I said like a real person: react, share an opinion or a short story. Keep the conversation alive.
+2. Then, if I made mistakes, correct and TEACH with [FIX]: what I said, the better version, the rule in 1-2 simple sentences with one extra example, and the "Italian trap" when relevant (why an Italian speaker makes this mistake, e.g. In Italian you say "ho 30 anni", but English uses "to be": I AM 30).
+   - Max 2 corrections per turn. Priority: errors that change meaning > my recurring errors from the profile > typical Italian-speaker errors (false friends, present perfect vs past simple, since/for, missing subject, prepositions, word order, uncountable nouns, make vs do, etc.).
+   - Also flag sentences that are correct but unnatural with [NATURAL].
+   - Explain rules in plain language, not technical jargon. If you use a grammar term (e.g. "present perfect"), explain it briefly the first time.
+   - If there's nothing important to fix, don't comment. Don't praise every turn.
+3. End with ONE open question (never yes/no) that makes me keep talking and, when possible, makes me reuse the structure you just corrected.
+
+## Articulation, conversation skills and NLP
+- Articulation ([SOUND]): you only receive a transcript, you cannot hear me. So every few turns pick ONE word or phrase from our conversation that Italian speakers typically get wrong (th, h, short vs long vowels, schwa, final consonants, word stress, -ed endings, linking) and coach it: a simple respelling, the IPA, and how to shape the mouth.
+- Conversation ([TALK]): now and then teach a skill that makes me sound fluent: fillers and thinking time, follow-up questions, hedging, agreeing and disagreeing politely, changing topic, telling a story well.
+- NLP ([NLP]): roughly every 3-4 turns, link an NLP concept to the language I just used: meta-model questions (e.g. "everyone? who specifically?"), reframing, presuppositions, modal operators ("I can't" -> "I haven't yet"), sensory predicates (see/hear/feel language), Milton-model patterns, anchoring language. Explain it simply and show how to use it in English. Present NLP as a communication toolkit, not as proven science.
+
+## Deeper explanations
+- If I say "why?", "explain" or "perché?": give me a mini-lesson in [LESSON] (max ~120 words): the rule, 3 examples, the most common exception, and the contrast with Italian. Then ask me to make 2 sentences of my own using it, correct them, and go back to the conversation.
+- If I repeat the SAME error twice in a session, automatically give me the mini-lesson, then continue.
+- If I say "spiegamelo in italiano": explain that point in Italian inside [LESSON], then switch back to English immediately.
+- If I ask any grammar question, answer it clearly in [LESSON] with examples and a quick practice exercise, then return to the conversation.
+
+## Your style
+- Speak at my level plus a little above. Natural spoken English: contractions, phrasal verbs, idioms, not textbook language.
+- Keep your conversational part short (2-4 sentences). I should talk most of the time; explanations are the only thing allowed to make your turns longer.
+- Every few turns, introduce one useful new expression naturally with [NEW] and later ask me to use it.
+- If I keep using basic words ("very good", "nice", "thing", "do"), challenge me to find a more precise one.
+- Stay in English, except: if I say "come si dice..." followed by Italian, give me the English with a short example and ask me to say my full sentence again; and when I ask "spiegamelo in italiano".
+- If you can't understand me, ask me to rephrase before helping.
+- My messages usually come from speech recognition: ignore likely transcription mistakes, and never correct spelling, punctuation or capitalization.
+
+## Adaptive difficulty
+- If I'm doing well for several turns, push harder: abstract topics, ask me to justify, compare, hypothesize (conditionals), tell stories in past tenses, use more advanced structures you've explained.
+- If I'm struggling, simplify and give me a sentence starter.
+
+## This session
+- Mode: ${mode.line(sess && sess.detail)}${sess && sess.extra ? '\n- Extra goal: ' + sess.extra : ''}
+- Corrections: ${corrLine}
+- If I type a mode name ("free talk", "role play ...", "debate", "story", "grammar ...", "strict mode", "flow mode", "drill"), switch to it.
+
+## Start
+When the session starts: if there's a learner profile, recap in one sentence what we're working on, quickly review one rule from RULES TO REVIEW with a quick question, then open the conversation (in the session's mode) in a way that makes me practise it. Otherwise introduce yourself in one sentence and ask about me, so you can assess my level.
+
+## Output format (an app parses your reply: follow it exactly)
+Plain text only, no markdown (no asterisks, no #, no bullet lists). Put each part on its own line, starting with its tag. Separate the fields of a part with " ||| ".
+[REPLY] your natural response, 2-4 sentences. Always present.
+[FIX] what I said ||| better version ||| the rule in 1-2 simple sentences + one extra example ||| the Italian trap, or - if not relevant
+[NATURAL] what I said ||| what a native would say ||| why
+[SOUND] word or phrase ||| simple respelling and IPA ||| how to articulate it
+[TALK] one conversation-skill tip linked to this moment
+[NLP] concept name ||| simple explanation linked to what I said ||| an English example I can use
+[NEW] expression ||| meaning ||| example sentence
+[LESSON] mini-lesson text; it may continue on the following lines
+[ASK] one open question. Always the last line.
+In most turns use only [REPLY], any [FIX] needed, and [ASK]. Never more than one of [SOUND], [TALK], [NLP], [NEW] in the same turn.
+Example:
+[REPLY] Oh, a weekend in Rome sounds amazing! I went there years ago and got completely lost near the Pantheon.
+[FIX] I have been in Rome last weekend ||| I was in Rome last weekend ||| With a finished time like "last weekend", use the past simple: "I saw her yesterday." ||| In Italian "sono stato" works for both, so you reach for the present perfect.
+[ASK] What was the best thing you ate while you were there?`;
+}
+
+/* ================= Parsing Oliver's replies ================= */
+const TAG_RE = /^\[(REPLY|FIX|NATURAL|SOUND|TALK|NLP|NEW|LESSON|ASK)\]\s*:?\s*(.*)$/i;
+function parseTutor(raw) {
+  const blocks = []; let cur = null;
+  for (const line0 of String(raw || '').replace(/\*\*/g, '').split('\n')) {
+    const line = line0.trim();
+    const m = line.match(TAG_RE);
+    if (m) { cur = { tag: m[1].toUpperCase(), text: m[2] }; blocks.push(cur); }
+    else if (line) { if (cur) cur.text += (cur.text ? '\n' : '') + line; else { cur = { tag: 'REPLY', text: line }; blocks.push(cur); } }
+    else if (cur && cur.tag === 'LESSON' && cur.text) cur.text += '\n';
+  }
+  for (const b of blocks) { b.text = b.text.trim(); b.parts = b.text.split('|||').map((s) => s.trim()); }
+  return blocks.filter((b) => b.text);
+}
+const NOTE_KINDS = {
+  FIX: 'Correzione', NATURAL: 'Più naturale', SOUND: 'Pronuncia', TALK: 'Conversazione', NLP: 'PNL', NEW: 'Nuova espressione', LESSON: 'Mini-lezione',
+};
+function noteEl(b) {
+  const p = b.parts; const kv = (k, v, cls) => v && v !== '-' ? h('div', { class: 'row' }, h('span', { class: 'k' }, k), h('span', { class: cls || '' }, v)) : null;
+  switch (b.tag) {
+    case 'FIX': return h('div', { class: 'note fix' }, h('span', { class: 'label' }, NOTE_KINDS.FIX),
+      h('div', {}, h('span', { class: 'said' }, p[0] || '')), p[1] ? h('div', {}, h('span', { class: 'better' }, p[1])) : null,
+      kv('Regola', p[2]), kv('Trappola italiana', p[3]));
+    case 'NATURAL': return h('div', { class: 'note' }, h('span', { class: 'label' }, NOTE_KINDS.NATURAL),
+      kv('Hai detto', p[0]), p[1] ? h('div', {}, h('span', { class: 'better' }, p[1])) : null, kv('Perché', p[2]));
+    case 'SOUND': return h('div', { class: 'note sound' }, h('span', { class: 'label' }, NOTE_KINDS.SOUND),
+      h('strong', {}, p[0] || ''), p[1] ? h('span', { class: 'ipa' }, p[1]) : null, kv('Come articolarlo', p[2]));
+    case 'TALK': return h('div', { class: 'note' }, h('span', { class: 'label' }, NOTE_KINDS.TALK), h('p', {}, b.text.replace(/\s*\|\|\|\s*/g, ' — ')));
+    case 'NLP': return h('div', { class: 'note nlp' }, h('span', { class: 'label' }, NOTE_KINDS.NLP),
+      h('strong', {}, p[0] || ''), p[1] ? h('p', {}, p[1]) : null, kv('Prova a dire', p[2]));
+    case 'NEW': return h('div', { class: 'note' }, h('span', { class: 'label' }, NOTE_KINDS.NEW),
+      h('strong', {}, p[0] || ''), p[1] ? h('p', {}, p[1]) : null, p[2] ? h('p', { class: 'muted' }, h('i', {}, p[2])) : null);
+    case 'LESSON': return h('div', { class: 'note lesson' }, h('span', { class: 'label' }, NOTE_KINDS.LESSON), h('div', {}, b.text.replace(/\s*\|\|\|\s*/g, '\n')));
+  }
+  return null;
+}
+function spokenLines(blocks) {
+  const all = settings().readAll; const L = [];
+  for (const b of blocks) {
+    const p = b.parts;
+    if (b.tag === 'REPLY' || b.tag === 'ASK') L.push({ text: b.text, language: 'en' });
+    else if (b.tag === 'FIX') L.push({ text: `Quick fix: instead of "${p[0]}", say "${p[1] || ''}".` + (all && p[2] ? ' ' + p[2] : ''), language: 'en' });
+    else if (b.tag === 'NATURAL') L.push({ text: `A native would say: "${p[1] || ''}".`, language: 'en' });
+    else if (b.tag === 'NEW') L.push({ text: `New expression: ${p[0]}. ${p[1] || ''}`, language: 'en' });
+    else if (b.tag === 'SOUND') L.push({ text: `Pronunciation tip: ${p[0]}.` + (all && p[2] ? ' ' + p[2] : ''), language: 'en' });
+    else if (b.tag === 'LESSON') L.push({ text: b.text.replace(/\s*\|\|\|\s*/g, '. ') });
+    else if (all && (b.tag === 'TALK' || b.tag === 'NLP')) L.push({ text: b.text.replace(/\s*\|\|\|\s*/g, '. '), language: 'en' });
+  }
+  return L.map((l) => Object.assign(l, { text: l.text.slice(0, 1990) })).filter((l) => l.text.trim());
+}
+
+/* ================= Voice out ================= */
+const Voice = {
+  speaking: false, cur: null, token: 0,
+  async speak(lines, owner) {
+    if (!lines.length) return;
+    const st = settings();
+    this.stop();
+    const my = ++this.token;
+    this.cur = owner || null; this.setSpeaking(true);
+    try {
+      if (Caps.tts) {
+        await Caps.tts.speak(lines.map((l) => { const o = { text: l.text, voice: st.voice }; if (l.language) o.language = l.language; return o; }), { rate: st.rate });
+      } else if ('speechSynthesis' in window) {
+        await new Promise((resolve) => {
+          const synth = window.speechSynthesis; const vs = synth.getVoices();
+          const v = vs.find((x) => /en[-_]GB/i.test(x.lang)) || vs.find((x) => /^en/i.test(x.lang));
+          lines.forEach((l, i) => {
+            const u = new SpeechSynthesisUtterance(l.text); u.rate = st.rate; u.lang = l.language === 'en' ? 'en-GB' : '';
+            if (v && l.language === 'en') u.voice = v;
+            if (i === lines.length - 1) { u.onend = resolve; u.onerror = resolve; }
+            synth.speak(u);
+          });
+        });
+      }
+    } catch (e) {
+      if (e && e.code === 'not_granted') toast('La voce di Oliver è disattivata per questa pagina (menu Permessi).');
+      else if (e && e.code === 'rate_limited') toast('Troppa voce per ora: leggi il testo, riprova tra poco.');
+    } finally { if (my === this.token) this.setSpeaking(false); }
+  },
+  stop() {
+    try { Caps.tts && Caps.tts.stop().catch(() => {}); } catch {}
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch {}
+  },
+  setSpeaking(on) { this.speaking = on; document.querySelectorAll('.avatar.talking').forEach((a) => a.classList.remove('talking')); if (on && this.cur) this.cur.classList.add('talking'); renderStatus(); },
+};
+function setupTts() {
+  if (!Caps.tts) return;
+  try { Caps.tts.onState(({ state: s }) => { const on = s !== 'idle'; if (on !== Voice.speaking) Voice.setSpeaking(on); }); } catch {}
+  try { Caps.tts.setRate && Caps.tts.setRate(settings().rate).catch(() => {}); } catch {}
+}
+
+/* ================= Voice in (dictation) ================= */
+let dictState = 'idle', autoSendPending = false, dictLangFallback = false;
+function setupDictation() {
+  const d = Caps.dictation; if (!d) return;
+  d.onPartial(({ text }) => { const el = $('#s-partial'); el.hidden = !text; el.textContent = text; });
+  d.onFinal(({ text }) => {
+    const ta = $('#input'); let t = text;
+    if (!ta.value.trim()) t = t.replace(/^\s+/, '');
+    ta.value += t; autosize(); syncSend();
+  });
+  d.onState(({ state: s, reason }) => {
+    dictState = s; renderMic();
+    if (s === 'idle') {
+      $('#s-partial').hidden = true;
+      if (reason === 'unavailable') { if (!dictLangFallback) dictLangFallback = true; else { Caps.dictation = null; renderMic(); toast('La dettatura non è disponibile qui: scrivi o usa il microfono della tastiera.'); } }
+      else if (reason === 'not_granted') toast('Microfono non consentito: puoi attivarlo dal menu Permessi.');
+      else if (reason === 'rate_limited') toast('Il microfono è occupato: riprova tra un attimo.');
+      else if (reason === 'upstream_error') toast('Il microfono si è interrotto. Riprova.');
+    }
+  });
+}
+function micClick() {
+  const d = Caps.dictation;
+  if (!d) { $('#input').focus(); toast('Qui il microfono non è disponibile: usa la dettatura della tastiera.'); return; }
+  if (d.active()) { finishDictation(); return; }
+  Voice.stop();
+  const p = dictLangFallback ? d.start() : d.start({ language: 'en' });
+  p.catch((e) => {
+    if (!e) return;
+    if (e.code === 'not_granted') toast('Microfono non consentito: attivalo dal menu Permessi della pagina.');
+    else if (e.code === 'dismissed') toast('Tocca di nuovo il microfono quando vuoi parlare.');
+    else if (e.code === 'unavailable') { if (!dictLangFallback) { dictLangFallback = true; toast('Riprova: tocca di nuovo il microfono.'); } else { Caps.dictation = null; renderMic(); toast('La dettatura non è disponibile qui: scrivi o usa il microfono della tastiera.'); } }
+    else if (e.code === 'rate_limited') toast('Il microfono è occupato: riprova tra un attimo.');
+    else if (e.code !== 'stopped') toast('Non riesco ad aprire il microfono. Riprova.');
+  });
+}
+async function finishDictation() {
+  autoSendPending = settings().autoSend;
+  try { await Caps.dictation.stop(); } catch {}
+  if (autoSendPending) { autoSendPending = false; if ($('#input').value.trim()) send(); }
+}
+function renderMic() {
+  const m = $('#mic'); const on = dictState === 'listening' || dictState === 'starting';
+  m.classList.toggle('on', on);
+  m.replaceChildren(icon(on ? 'stop' : 'mic'));
+  m.setAttribute('aria-label', on ? 'Ho finito di parlare' : 'Parla in inglese');
+  m.setAttribute('aria-pressed', on ? 'true' : 'false');
+  renderStatus();
+}
+
+/* ================= Routing ================= */
+const VIEWS = { home: 'oggi', notebook: 'quaderno', profile: 'profilo' };
+function viewFromHash() { const h0 = location.hash.slice(1); return Object.keys(VIEWS).find((k) => VIEWS[k] === h0) || 'home'; }
+function go(view) { if (location.hash.slice(1) !== VIEWS[view]) location.hash = VIEWS[view]; else route(); }
+function showOnly(id) { for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== id; }
+function route() {
+  const tabs = $('#tabs');
+  if (!state.profile) { tabs.hidden = true; showOnly('v-onboard'); renderOnboard(); return; }
+  tabs.hidden = false;
+  if (state.view === 'report') { showOnly('v-report'); markTabs(null); return; }
+  state.view = viewFromHash();
+  markTabs(state.view);
+  showOnly('v-' + state.view);
+  if (state.view === 'home') renderHome();
+  if (state.view === 'notebook') renderNotebook();
+  if (state.view === 'profile') renderProfile();
+}
+function markTabs(v) { for (const t of document.querySelectorAll('.tab')) { if (t.dataset.view === v) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current'); } }
+
+/* ================= Onboarding ================= */
+function chipGroup(options, selected, { multi = true, onChange } = {}) {
+  const wrap = h('div', { class: 'chips', role: multi ? 'group' : 'radiogroup' });
+  const draw = () => {
+    wrap.replaceChildren(...options.map((o) => {
+      const val = typeof o === 'string' ? o : o.value; const lab = typeof o === 'string' ? o : o.label;
+      return h('button', { class: 'chip', type: 'button', 'aria-pressed': selected.has(val) ? 'true' : 'false', onclick: () => {
+        if (multi) { selected.has(val) ? selected.delete(val) : selected.add(val); } else { selected.clear(); selected.add(val); }
+        draw(); onChange && onChange();
+      } }, lab);
+    }));
+  };
+  draw(); wrap.redraw = draw; return wrap;
+}
+function addInput(list, selected, groupEl, ph) {
+  const inp = h('input', { type: 'text', placeholder: ph, 'aria-label': ph, maxlength: '40' });
+  const add = () => { const v = inp.value.trim(); if (!v) return; if (!list.includes(v)) list.push(v); selected.add(v); inp.value = ''; groupEl.redraw(); };
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+  return h('div', { class: 'chip-add' }, inp, h('button', { class: 'btn ghost sm', type: 'button', onclick: add }, 'Aggiungi'));
+}
+function renderOnboard() {
+  const v = $('#v-onboard');
+  const ob = state.ob || (state.ob = { level: new Set(['unknown']), goals: new Set(), interests: new Set(INTERESTS), goalList: [...GOALS], intList: [...INTERESTS] });
+  const levelG = chipGroup([{ value: 'unknown', label: 'Non lo so: valutami tu' }, ...LEVELS.map((l) => ({ value: l, label: l }))], ob.level, { multi: false });
+  const goalG = chipGroup(ob.goalList, ob.goals);
+  const intG = chipGroup(ob.intList, ob.interests);
+  const startBtn = h('button', { class: 'btn primary lg', onclick: async () => {
+    startBtn.disabled = true;
+    state.profile = { level: [...ob.level][0] || 'unknown', goals: [...ob.goals], interests: [...ob.interests], lp: null, sessions: 0, minutes: 0, streak: 0, lastDay: null, createdAt: Date.now(), settings: { ...DEFAULT_SETTINGS } };
+    await saveProfile();
+    state.ob = null; route(); startSession('free', '');
+  } }, 'Inizia la prima conversazione', icon('send'));
+  v.replaceChildren(
+    h('div', { class: 'hello' },
+      h('span', { class: 'label' }, 'Il tuo tutor di inglese'),
+      h('h1', {}, 'Ciao, sono Oliver. ', h('em', {}, 'Parliamo.')),
+      h('p', {}, 'Tu parli in inglese, io ti rispondo come farebbe una persona vera, ti correggo e ti spiego la regola dietro ogni errore. A fine sessione ti preparo il report e mi ricordo dove ripartire domani.')),
+    h('div', { class: 'promise' },
+      h('div', {}, h('strong', {}, 'Parli il 70% del tempo'), h('span', {}, 'Risposte brevi, una domanda aperta alla volta.')),
+      h('div', {}, h('strong', {}, 'Correzioni che insegnano'), h('span', {}, 'Errore, versione giusta, regola e trappola italiana.')),
+      h('div', {}, h('strong', {}, 'Memoria dei progressi'), h('span', {}, 'Errori ricorrenti, regole da ripassare, parole nuove.'))),
+    h('div', { class: 'card raised' },
+      h('div', { class: 'field' }, h('span', {}, 'Il tuo livello'), levelG),
+      h('div', { class: 'field' }, h('span', {}, 'Per cosa ti serve l’inglese?'), goalG, addInput(ob.goalList, ob.goals, goalG, 'Altro obiettivo…')),
+      h('div', { class: 'field' }, h('span', {}, 'Di cosa ti piace parlare?'), intG, addInput(ob.intList, ob.interests, intG, 'Altro interesse…')),
+      h('div', {}, startBtn)),
+  );
+}
+
+/* ================= Home ================= */
+function displayStreak(p) {
+  if (!p.lastDay) return 0;
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  return (p.lastDay === dayKey(new Date()) || p.lastDay === dayKey(y)) ? (p.streak || 0) : 0;
+}
+function capNotice() {
+  if (!Caps.ready || Caps.sample) return null;
+  return h('div', { class: 'notice warn' }, h('p', {}, 'Oliver usa Claude per rispondere, e da qui non riesce a raggiungerlo. Apri questa pagina da claude.ai, con il tuo account, per parlare con lui.'));
+}
+function renderHome() {
+  const v = $('#v-home'); const p = state.profile;
+  const hour = new Date().getHours();
+  const hi = hour < 13 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  const lvl = p.level && p.level !== 'unknown' ? p.level : null;
+  const lvlIdx = LEVELS.indexOf(lvl);
+  const lp = p.lp;
+
+  const cur = state.session;
+  const resume = cur ? h('div', { class: 'resume' },
+    h('div', {}, h('strong', { class: 'label', style: 'color:inherit;opacity:.7' }, 'Sessione in corso'),
+      h('p', {}, `${modeById(cur.mode).name}${cur.detail ? ': ' + cur.detail : ''} · ${fmtClock(cur.activeMs || 0)} · ${cur.turns.filter((t) => t.role === 'user' && !t.hidden).length} messaggi tuoi`)),
+    h('button', { class: 'btn primary', onclick: () => openSession() }, 'Riprendi')) : null;
+
+  const detailWrap = h('div', { class: 'start-row' });
+  const drawDetail = () => {
+    const m = modeById(state.homeMode);
+    if (!m.detail) { detailWrap.replaceChildren(); return; }
+    const inp = h('input', { class: 'input', id: 'mode-detail', type: 'text', placeholder: m.detail.ph, value: state.homeDetail, maxlength: '120', oninput: (e) => { state.homeDetail = e.target.value; } });
+    const sugg = h('div', { class: 'chips' }, m.detail.sugg.map((s) => h('button', { class: 'chip', type: 'button', onclick: () => { state.homeDetail = s; inp.value = s; } }, s)));
+    detailWrap.replaceChildren(h('label', { class: 'field' }, h('span', {}, m.detail.label), inp), sugg);
+  };
+  const modeTiles = h('div', { class: 'modes', role: 'radiogroup', 'aria-label': 'Tipo di sessione' });
+  const drawModes = () => modeTiles.replaceChildren(...MODES.map((m) => h('button', { class: 'mode', role: 'radio', type: 'button', 'aria-checked': state.homeMode === m.id ? 'true' : 'false', onclick: () => { if (state.homeMode !== m.id) { state.homeMode = m.id; state.homeDetail = ''; } drawModes(); drawDetail(); } }, h('strong', {}, m.name), h('span', {}, m.desc))));
+  drawModes(); drawDetail();
+  const startBtn = h('button', { class: 'btn primary lg', disabled: Caps.ready && !Caps.sample, onclick: () => maybeStart(state.homeMode, state.homeDetail.trim()) }, icon('mic'), cur ? 'Nuova sessione' : 'Inizia a parlare');
+
+  const focus = h('div', { class: 'card' },
+    h('span', { class: 'label' }, 'Il focus di oggi'),
+    lp && lp.nextFocus ? h('p', { style: 'font-size:1.15rem;font-family:var(--f-display);font-weight:700' }, lp.nextFocus) : h('p', { class: 'muted' }, 'Dopo la prima sessione Oliver sceglie qui su cosa lavorare la volta dopo.'),
+    lp && asList(lp.rulesToReview).length ? h('div', { class: 'field' }, h('span', { class: 'k muted', style: 'font-size:.85rem' }, 'Regole da ripassare'),
+      h('div', { class: 'chips' }, asList(lp.rulesToReview).map((r) => h('button', { class: 'chip', type: 'button', title: 'Fai una sessione di grammatica su questo', onclick: () => { state.homeMode = 'grammar'; state.homeDetail = r; renderHome(); $('#start-card').scrollIntoView({ behavior: 'smooth' }); } }, r)))) : null);
+
+  const recurring = asList(lp && lp.recurringErrors);
+  const lastErrors = (state.sessions[0] && state.sessions[0].report && state.sessions[0].report.errors) || [];
+  const errorsCard = h('div', { class: 'card' },
+    h('div', { class: 'card-head' }, h('span', { class: 'label' }, 'Errori ricorrenti'), recurring.length ? h('button', { class: 'link-btn', onclick: () => maybeStart('drill', '') }, 'Fai un drill') : null),
+    recurring.length ? h('ul', { class: 'list' }, recurring.map((e) => h('li', {}, e)))
+      : lastErrors.length ? h('ul', { class: 'list' }, lastErrors.slice(0, 4).map((e) => h('li', {}, h('span', { class: 'said' }, e.said), h('span', { class: 'better' }, e.correct))))
+      : h('p', { class: 'muted' }, 'Qui compariranno gli errori che fai più spesso, così li puoi allenare.'));
+
+  v.replaceChildren(...[
+    h('div', { class: 'greet' },
+      h('div', { style: 'display:grid;gap:10px' },
+        h('h1', {}, hi + '.'),
+        h('div', { class: 'cefr', 'aria-label': lvl ? 'Livello stimato ' + lvl : 'Livello da valutare' }, LEVELS.map((l, i) => h('span', { class: i === lvlIdx ? 'on' : i < lvlIdx ? 'past' : '' }, l))),
+        h('span', { class: 'muted', style: 'font-size:.88rem' }, lvl ? 'Livello stimato da Oliver' : 'Oliver stimerà il tuo livello nella prima sessione')),
+      h('div', { class: 'stats' },
+        h('div', { class: 'stat' }, h('b', {}, String(displayStreak(p))), h('span', {}, 'giorni di fila')),
+        h('div', { class: 'stat' }, h('b', {}, String(p.sessions || 0)), h('span', {}, 'sessioni')),
+        h('div', { class: 'stat' }, h('b', {}, String(p.minutes || 0)), h('span', {}, 'minuti parlati')))),
+    capNotice(),
+    resume,
+    h('div', { class: 'card raised', id: 'start-card' },
+      h('div', { class: 'card-head' }, h('h2', {}, cur ? 'Oppure inizia qualcosa di nuovo' : 'Di cosa parliamo oggi?'), h('span', { class: 'muted', style: 'font-size:.9rem' }, '20–30 minuti al giorno bastano')),
+      modeTiles, detailWrap, h('div', {}, startBtn)),
+    h('div', { class: 'grid-2' }, focus, errorsCard),
+  ].filter(Boolean));
+}
+
+/* ================= Session ================= */
+function newSession(mode, detail, extra) {
+  return { id: uid(), mode, detail: detail || '', extra: extra || '', startedAt: Date.now(), activeMs: 0, correction: settings().correction, turns: [] };
+}
+let startingNow = false;
+async function maybeStart(mode, detail, extra) {
+  if (state.session) {
+    const ok = await confirmDialog({ title: 'Iniziare una nuova sessione?', text: 'La sessione in corso verrà chiusa senza report. Se vuoi il report, riprendila e premi Termina.', ok: 'Nuova sessione' });
+    if (!ok) return;
+  }
+  startSession(mode, detail, extra);
+}
+function startSession(mode, detail, extra) {
+  if (state.session) Store.delDoc('current');
+  startingNow = true;
+  state.session = newSession(mode, detail, extra);
+  const m = modeById(mode);
+  state.session.turns.push({ role: 'user', hidden: true, content: `(The session starts now. Mode: ${m.line(detail)} Begin as described in "Start".)` });
+  saveCurrent();
+  openSession();
+  requestTutor();
+}
+function saveCurrent() { if (state.session) Store.setDoc('current', state.session); }
+
+let tick = null, lastTick = 0;
+function openSession() {
+  const s = state.session; if (!s) return;
+  document.documentElement.classList.add('locked');
+  $('#v-session').hidden = false;
+  $('#s-mode').textContent = modeById(s.mode).name + (s.detail ? ': ' + s.detail : '');
+  renderChips(); renderMsgs(); renderBoard(); renderRatio(); renderMic(); syncSend();
+  lastTick = Date.now(); clearInterval(tick);
+  tick = setInterval(() => { const now = Date.now(); if (!document.hidden && state.session) state.session.activeMs += Math.min(now - lastTick, 5000); lastTick = now; $('#s-timer').textContent = fmtClock(state.session ? state.session.activeMs : 0); }, 1000);
+  $('#s-timer').textContent = fmtClock(s.activeMs);
+  initCaps().then(() => { renderMic(); renderStatus(); if (!Caps.sample) renderStatus(); });
+  setTimeout(() => { if (matchMedia('(pointer:fine)').matches) $('#input').focus(); }, 50);
+}
+function closeSession() {
+  clearInterval(tick); Voice.stop();
+  if (state.ctl) state.ctl.abort();
+  try { if (Caps.dictation && Caps.dictation.active()) Caps.dictation.stop(); } catch {}
+  saveCurrent();
+  $('#v-session').hidden = true; document.documentElement.classList.remove('locked');
+  closeSheet();
+  route();
+}
+function renderChips() {
+  const s = state.session; const c = $('#s-chips');
+  const corr = s.correction || 'normal';
+  c.replaceChildren(
+    h('button', { class: 'chip', type: 'button', onclick: () => quick('why?') }, icon('why'), 'Perché?'),
+    h('button', { class: 'chip', type: 'button', onclick: () => quick('spiegamelo in italiano') }, icon('it'), 'In italiano'),
+    h('button', { class: 'chip', type: 'button', onclick: () => quick('Can you say that again, more simply and a bit slower?') }, 'Più semplice'),
+    h('button', { class: 'chip', type: 'button', title: 'Cambia quante correzioni ricevi', 'aria-pressed': corr === 'normal' ? 'false' : 'true', onclick: () => {
+      const next = corr === 'normal' ? 'strict' : corr === 'strict' ? 'flow' : 'normal';
+      s.correction = next; saveCurrent(); renderChips();
+      toast(next === 'strict' ? 'Strict mode: Oliver corregge ogni errore' : next === 'flow' ? 'Flow mode: correzioni solo nel report finale' : 'Correzioni normali: massimo 2 per turno');
+    } }, CORRECTION[corr]),
+  );
+}
+function quick(text) { if (state.busy) return; $('#input').value = text; send(); }
+
+function renderMsgs() {
+  const box = $('#s-msgs'); box.replaceChildren();
+  const s = state.session;
+  s.turns.forEach((t, i) => { if (t.hidden) return; box.append(t.role === 'user' ? userMsg(t.content) : tutorMsg(t.content, i)); });
+  const last = s.turns[s.turns.length - 1];
+  if (last && last.role === 'user' && !state.busy && !startingNow) {
+    box.append(h('div', { class: 'msg' }, h('p', { class: 'muted' }, 'Oliver non ha ancora risposto.'), h('div', {}, h('button', { class: 'btn ghost sm', onclick: (e) => { e.currentTarget.closest('.msg').remove(); requestTutor(); } }, 'Chiedi a Oliver di rispondere'))));
+  }
+  scrollChat(true);
+}
+function userMsg(text) { return h('div', { class: 'msg me' }, h('div', { class: 'bubble' }, text)); }
+function tutorBody(text) {
+  const blocks = parseTutor(text); const body = [];
+  for (const b of blocks) {
+    if (b.tag === 'REPLY') body.push(h('p', { class: 'reply' }, b.text));
+    else if (b.tag === 'ASK') body.push(h('div', { class: 'ask' }, h('span', { class: 'label' }, 'Tocca a te'), h('p', {}, b.text)));
+    else { const n = noteEl(b); if (n) body.push(n); }
+  }
+  return { blocks, body };
+}
+function tutorMsg(text, idx) {
+  const av = h('span', { class: 'avatar', 'aria-hidden': 'true' }, 'O');
+  const { blocks, body } = tutorBody(text);
+  const hasFix = blocks.some((b) => b.tag === 'FIX' || b.tag === 'NATURAL');
+  const actions = h('div', { class: 'msg-actions' },
+    h('button', { type: 'button', onclick: () => Voice.speak(spokenLines(blocks), av) }, icon('speaker'), 'Ascolta'),
+    hasFix ? h('button', { type: 'button', onclick: () => quick('why?') }, icon('why'), 'Perché?') : null,
+    h('button', { type: 'button', onclick: () => quick('spiegamelo in italiano') }, icon('it'), 'In italiano'));
+  const el = h('div', { class: 'msg', 'data-i': idx }, h('div', { class: 'who' }, av, h('span', { class: 'label' }, 'Oliver')), ...body, actions);
+  el._av = av; return el;
+}
+function pendingMsg() {
+  const av = h('span', { class: 'avatar', 'aria-hidden': 'true' }, 'O');
+  const content = h('div', { style: 'display:grid;gap:10px' }, h('div', { class: 'thinking', 'aria-label': 'Oliver sta pensando' }, h('i'), h('i'), h('i')));
+  const el = h('div', { class: 'msg' }, h('div', { class: 'who' }, av, h('span', { class: 'label' }, 'Oliver')), content);
+  el._content = content; el._av = av; return el;
+}
+function scrollChat(force) {
+  const c = $('#s-chat');
+  const near = c.scrollHeight - c.scrollTop - c.clientHeight < 220;
+  if (force || near) requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; });
+}
+
+const ERR_COPY = {
+  not_granted: 'Non hai consentito a Oliver di usare Claude. Puoi riattivarlo dal menu Permessi di questa pagina.',
+  sampling_disabled: 'Claude non è disponibile per questo account.',
+  rate_limited: 'Hai fatto molte richieste o hai raggiunto il limite di utilizzo. Riprova tra qualche minuto.',
+  session_expired: 'La sessione di claude.ai è scaduta: accedi di nuovo e riprova.',
+  refused: 'Oliver non può rispondere a questo messaggio. Prova a riformularlo.',
+  prompt_too_large: 'La conversazione è diventata troppo lunga. Termina la sessione per salvare il report.',
+  empty_completion: 'Oliver non ha prodotto una risposta. Riprova.',
+};
+const errCopy = (e) => ERR_COPY[e && e.code] || 'La connessione si è interrotta. Riprova.';
+
+function turnsForModel() {
+  const s = state.session;
+  let t = s.turns.map((x) => ({ role: x.role, content: x.content }));
+  if (t.length > 40) t = t.slice(-40);
+  while (t.length && t[0].role !== 'user') t.shift();
+  return [{ role: 'user', content: buildRules(s) }, ...t];
+}
+async function requestTutor() {
+  await initCaps();
+  const s = state.session; if (!s) return;
+  if (!Caps.sample) { state.busy = false; startingNow = false; renderStatus(); renderMsgs(); return; }
+  if (state.busy) return;
+  state.busy = true; startingNow = false; syncSend();
+  const ctl = new AbortController(); state.ctl = ctl;
+  const pm = pendingMsg(); $('#s-msgs').append(pm); scrollChat(true); renderStatus();
+  const st = settings();
+  try {
+    const { text } = await Caps.sample(turnsForModel(), {
+      cache: false, signal: ctl.signal, modelTier: st.accurate ? 'default' : 'quick',
+      onText: ({ text: t }) => { if (state.session !== s) return; pm._content.replaceChildren(...tutorBody(t).body); scrollChat(); },
+    });
+    state.busy = false; state.ctl = null;
+    if (state.session !== s) return;
+    s.turns.push({ role: 'assistant', content: text });
+    const el = tutorMsg(text, s.turns.length - 1); pm.replaceWith(el);
+    renderBoard(); renderRatio(); saveCurrent(); syncSend(); renderStatus(); scrollChat();
+    if (st.voiceOn && !$('#v-session').hidden) Voice.speak(spokenLines(parseTutor(text)), el._av);
+  } catch (e) {
+    state.busy = false; state.ctl = null;
+    if (state.session !== s) return;
+    if (e && e.text && e.code !== 'refused') {
+      s.turns.push({ role: 'assistant', content: e.text });
+      pm.replaceWith(tutorMsg(e.text, s.turns.length - 1)); saveCurrent(); renderBoard(); renderRatio();
+      if (e.code !== 'cancelled') toast(errCopy(e));
+    } else if (e && e.code === 'cancelled') pm.remove();
+    else {
+      const retry = !['not_granted', 'sampling_disabled', 'prompt_too_large'].includes(e && e.code);
+      const permsBtn = e && e.code === 'not_granted' && Caps.perms ? h('button', { class: 'btn ghost sm', onclick: () => Caps.perms.manage().catch(() => toast('Apri il menu Permessi della pagina.')) }, 'Apri i permessi') : null;
+      pm._content.replaceChildren(h('div', { class: 'err' }, h('span', {}, errCopy(e)),
+        retry ? h('button', { class: 'btn ghost sm', onclick: () => { pm.remove(); requestTutor(); } }, 'Riprova') : null, permsBtn));
+    }
+    syncSend(); renderStatus();
+  }
+}
+function send() {
+  const ta = $('#input'); const text = ta.value.trim();
+  if (!text || state.busy || !state.session) return;
+  if (/^(report|basta per oggi|stop|termina)[.!]?$/i.test(text)) { ta.value = ''; autosize(); syncSend(); endSession(); return; }
+  Voice.stop();
+  const s = state.session;
+  s.turns.push({ role: 'user', content: text });
+  ta.value = ''; autosize(); syncSend();
+  $('#s-msgs').append(userMsg(text)); renderRatio(); saveCurrent(); scrollChat(true);
+  requestTutor();
+}
+function syncSend() { $('#send').disabled = !$('#input').value.trim() || state.busy || !state.session; }
+function autosize() { const ta = $('#input'); ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight + 2, 160) + 'px'; }
+function renderStatus() {
+  const el = $('#s-status'); if (!el) return;
+  const parts = [];
+  if (Caps.ready && !Caps.sample) parts.push(h('span', {}, 'Apri Oliver da claude.ai per parlare con lui.'));
+  else if (state.busy) parts.push(h('span', {}, 'Oliver sta rispondendo…'), h('button', { class: 'link-btn', onclick: () => state.ctl && state.ctl.abort() }, 'Ferma'));
+  else if (Voice.speaking) parts.push(h('span', {}, 'Oliver sta parlando…'), h('button', { class: 'link-btn', onclick: () => Voice.stop() }, 'Silenzio'));
+  else if (dictState === 'listening' || dictState === 'starting') parts.push(h('span', {}, 'Ti ascolto. Tocca di nuovo il microfono quando hai finito.'));
+  else if (Caps.ready && !Caps.dictation) parts.push(h('span', { class: 'hint' }, 'Su questo dispositivo usa il microfono della tastiera per dettare in inglese.'));
+  else parts.push(h('span', { class: 'hint' }, 'Tocca il microfono e parla. Invio per mandare, Maiusc+Invio per andare a capo.'));
+  el.replaceChildren(...parts);
+}
+function renderRatio() {
+  const s = state.session; if (!s) return;
+  let me = 0, ol = 0;
+  for (const t of s.turns) {
+    if (t.hidden) continue;
+    if (t.role === 'user') me += words(t.content);
+    else for (const b of parseTutor(t.content)) if (b.tag === 'REPLY' || b.tag === 'ASK') ol += words(b.text);
+  }
+  const pct = me + ol ? Math.round((me / (me + ol)) * 100) : 0;
+  $('#s-ratio').textContent = 'Tu ' + pct + '%';
+  $('#s-ratio-bar').style.width = pct + '%';
+}
+function collectNotes(turns) {
+  const n = { FIX: [], NATURAL: [], NEW: [], SOUND: [], NLP: [], TALK: [], LESSON: [] };
+  for (const t of turns) if (t.role === 'assistant') for (const b of parseTutor(t.content)) if (n[b.tag]) n[b.tag].push(b);
+  return n;
+}
+function boardContent() {
+  const n = collectNotes(state.session.turns);
+  const sec = (title, items, render) => items.length ? h('div', { class: 'board-sec' }, h('span', { class: 'label' }, title), h('ul', { class: 'list' }, items.map(render))) : null;
+  const total = n.FIX.length + n.NATURAL.length + n.NEW.length + n.SOUND.length + n.NLP.length + n.TALK.length;
+  const content = [
+    sec('Correzioni', [...n.FIX, ...n.NATURAL], (b) => h('li', {}, h('span', { class: 'said' }, b.parts[0] || ''), h('span', { class: 'better' }, b.parts[1] || ''), b.tag === 'FIX' && b.parts[2] ? h('span', { class: 'muted', style: 'font-size:.88rem' }, b.parts[2]) : null)),
+    sec('Espressioni nuove', n.NEW, (b) => h('li', {}, h('strong', {}, b.parts[0]), h('span', { class: 'muted' }, b.parts[1] || ''))),
+    sec('Pronuncia', n.SOUND, (b) => h('li', {}, h('strong', {}, b.parts[0]), h('span', { class: 'muted' }, b.parts[1] || ''))),
+    sec('PNL', n.NLP, (b) => h('li', {}, h('strong', {}, b.parts[0]), h('span', { class: 'muted' }, b.parts[2] || b.parts[1] || ''))),
+    sec('Conversazione', n.TALK, (b) => h('li', {}, b.text.replace(/\s*\|\|\|\s*/g, ' — '))),
+  ].filter(Boolean);
+  if (!content.length) content.push(h('p', { class: 'muted' }, 'Qui si raccolgono correzioni, espressioni, pronuncia e PNL di questa sessione.'));
+  return { total, content };
+}
+function renderBoard() {
+  if (!state.session) return;
+  const { total, content } = boardContent();
+  $('#s-board-count').textContent = String(total);
+  $('#s-board').replaceChildren(h('div', { class: 'board-in' }, h('h2', { style: 'font-size:1.1rem' }, 'Appunti di oggi'), ...content));
+  const sheet = $('#sheet-body'); if (sheet) sheet.replaceChildren(...boardContent().content);
+}
+function openSheet() {
+  closeSheet();
+  const body = h('div', { class: 'board-in', id: 'sheet-body' }, ...boardContent().content);
+  const sh = h('div', { class: 'sheet', id: 'sheet', onclick: (e) => { if (e.target.id === 'sheet') closeSheet(); } },
+    h('div', { class: 'sheet-panel', role: 'dialog', 'aria-label': 'Appunti di oggi' },
+      h('div', { class: 'sheet-head' }, h('h2', { style: 'font-size:1.1rem' }, 'Appunti di oggi'), h('button', { class: 'icon-btn', 'aria-label': 'Chiudi', onclick: closeSheet }, icon('x'))), body));
+  document.body.append(sh);
+  sh.querySelector('.icon-btn').focus();
+}
+function closeSheet() { const s = $('#sheet'); if (s) s.remove(); }
+
+/* ================= End of session & report ================= */
+function transcriptText(s) {
+  const out = [];
+  for (const t of s.turns) {
+    if (t.hidden) continue;
+    if (t.role === 'user') out.push('LEARNER: ' + t.content);
+    else out.push('OLIVER: ' + parseTutor(t.content).map((b) => `[${b.tag}] ${b.text}`).join(' '));
+  }
+  let txt = out.join('\n');
+  if (txt.length > 90000) txt = '…' + txt.slice(-90000);
+  return txt;
+}
+function reportPrompt(s) {
+  return `You are Oliver, an English conversation tutor for an Italian native speaker. Below are the learner's profile before today and the transcript of today's spoken session (the learner's lines come from speech recognition, so ignore spelling and punctuation). Write the end-of-session report.
+
+Reply with only a JSON object of exactly this shape:
+{"wellDone": ["three specific things the learner did well"],
+ "errors": [{"said": "what the learner said", "correct": "correct version", "rule": "the rule in one line"}],
+ "rules": [{"name": "short rule name", "summary": "the rule explained simply in 1-2 sentences, with an example"}],
+ "words": [{"term": "expression", "meaning": "simple meaning in English", "example": "example sentence"}],
+ "nlp": "one sentence on the NLP idea practised today, or an empty string",
+ "sound": "one sentence on the pronunciation point of today, or an empty string",
+ "nextFocus": "one concrete focus for next session",
+ "level": "estimated CEFR level: A1, A2, B1, B2, C1 or C2",
+ "profile": {"level": "", "recurringErrors": [""], "rulesLearned": [""], "rulesToReview": [""], "wordsInProgress": [""], "topicsDone": [""], "nextFocus": ""}}
+
+Rules: "errors" holds the top 3-5 errors of today (fewer if there were fewer, [] if none). "words" holds up to 5 new words or expressions from today. Write in simple English. The updated "profile" merges the previous profile with today: under 170 words in total, keep the most important recurring errors, move rules the learner now uses correctly from rulesToReview to rulesLearned, keep each list short (max 6 items, short phrases).
+
+PREVIOUS PROFILE:
+${lpText(state.profile.lp)}
+Previous level: ${state.profile.level || 'unknown'}
+Session mode: ${modeById(s.mode).line(s.detail)}
+
+TRANSCRIPT:
+${transcriptText(s)}`;
+}
+async function endSession() {
+  const s = state.session; if (!s) return;
+  if (state.busy && state.ctl) state.ctl.abort();
+  const mine = s.turns.filter((t) => t.role === 'user' && !t.hidden).length;
+  if (!mine) {
+    const ok = await confirmDialog({ title: 'Chiudere la sessione?', text: 'Non hai ancora detto niente, quindi non c’è un report da preparare.', ok: 'Chiudi sessione' });
+    if (!ok) return;
+    state.session = null; Store.delDoc('current'); closeSession(); return;
+  }
+  clearInterval(tick); Voice.stop();
+  try { if (Caps.dictation && Caps.dictation.active()) Caps.dictation.stop(); } catch {}
+  saveCurrent();
+  $('#v-session').hidden = true; document.documentElement.classList.remove('locked'); closeSheet();
+  state.view = 'report'; route();
+  runReport(s);
+}
+async function runReport(s) {
+  const v = $('#v-report');
+  v.replaceChildren(
+    h('div', { class: 'report-hero' }, h('span', { class: 'label' }, 'Report della sessione'), h('h1', {}, 'Oliver sta rileggendo la conversazione…'),
+      h('p', { class: 'muted' }, 'Prepara errori, regole, parole nuove e aggiorna il tuo profilo. Può richiedere fino a un minuto.')),
+    h('div', { class: 'card loading-block' }, h('div', { class: 'shimmer', style: 'width:70%' }), h('div', { class: 'shimmer' }), h('div', { class: 'shimmer', style: 'width:85%' }), h('div', { class: 'shimmer', style: 'width:55%' })));
+  await initCaps();
+  try {
+    if (!Caps.sample) throw { code: 'not_granted' };
+    const r = await Caps.sample.json(reportPrompt(s), { modelTier: 'default', cache: false });
+    const report = normalizeReport(r);
+    const minutes = Math.max(1, Math.round((s.activeMs || 0) / 60000));
+    const rec = { id: s.id, mode: s.mode, detail: s.detail, startedAt: s.startedAt, endedAt: Date.now(), minutes,
+      userWords: s.turns.filter((t) => t.role === 'user' && !t.hidden).reduce((a, t) => a + words(t.content), 0), report };
+    const p = state.profile; const today = dayKey(new Date()); const y = new Date(); y.setDate(y.getDate() - 1);
+    p.sessions = (p.sessions || 0) + 1; p.minutes = (p.minutes || 0) + minutes;
+    if (p.lastDay !== today) p.streak = p.lastDay === dayKey(y) ? (p.streak || 0) + 1 : 1;
+    p.lastDay = today;
+    if (report.profile) p.lp = report.profile;
+    if (LEVELS.includes(report.level)) p.level = report.level;
+    state.sessions.unshift(rec);
+    state.session = null;
+    await Promise.all([saveProfile(), Store.addSession(rec).catch(() => toast('Il report è sul dispositivo ma non sono riuscito a salvarlo online.')), Store.delDoc('current')]);
+    renderReport(v, rec, true);
+  } catch (e) {
+    const msg = e && e.code === 'invalid_json' ? 'Il report è uscito in un formato che non riesco a leggere.' : errCopy(e);
+    v.replaceChildren(
+      h('div', { class: 'report-hero' }, h('span', { class: 'label' }, 'Report della sessione'), h('h1', {}, 'Il report non è pronto')),
+      h('div', { class: 'notice warn' }, h('p', {}, msg + ' La conversazione è salvata: puoi riprovare ora o più tardi da Oggi.'),
+        h('button', { class: 'btn primary sm', onclick: () => runReport(s) }, 'Riprova'),
+        h('button', { class: 'btn ghost sm', onclick: () => { state.view = 'home'; go('home'); } }, 'Torna a Oggi')));
+  }
+}
+function normalizeReport(r) {
+  const o = r && typeof r === 'object' ? r : {};
+  const arr = (a) => Array.isArray(a) ? a : [];
+  const pr = o.profile && typeof o.profile === 'object' ? o.profile : null;
+  return {
+    wellDone: arr(o.wellDone).map(String).slice(0, 5),
+    errors: arr(o.errors).filter((e) => e && typeof e === 'object').map((e) => ({ said: String(e.said || ''), correct: String(e.correct || ''), rule: String(e.rule || '') })).slice(0, 6),
+    rules: arr(o.rules).filter((e) => e && typeof e === 'object').map((e) => ({ name: String(e.name || ''), summary: String(e.summary || '') })).slice(0, 6),
+    words: arr(o.words).filter((e) => e && typeof e === 'object').map((e) => ({ term: String(e.term || ''), meaning: String(e.meaning || ''), example: String(e.example || '') })).slice(0, 6),
+    nlp: String(o.nlp || ''), sound: String(o.sound || ''), nextFocus: String(o.nextFocus || ''), level: String(o.level || '').toUpperCase().trim(),
+    profile: pr ? { level: String(pr.level || o.level || ''), recurringErrors: asList(pr.recurringErrors), rulesLearned: asList(pr.rulesLearned), rulesToReview: asList(pr.rulesToReview), wordsInProgress: asList(pr.wordsInProgress), topicsDone: asList(pr.topicsDone), nextFocus: String(pr.nextFocus || o.nextFocus || '') } : null,
+  };
+}
+function wordCard(w) {
+  return h('div', { class: 'word' },
+    h('div', { class: 'word-head' }, h('strong', {}, w.term),
+      h('button', { class: 'icon-btn', style: 'width:36px;height:36px', 'aria-label': 'Ascolta ' + w.term, onclick: () => Voice.speak([{ text: w.term + '. ' + (w.example || ''), language: 'en' }]) }, icon('speaker'))),
+    w.meaning ? h('span', {}, w.meaning) : null, w.example ? h('span', { class: 'ex' }, w.example) : null);
+}
+function reportBody(r) {
+  const out = [];
+  if (r.wellDone.length) out.push(h('div', { class: 'card' }, h('h2', {}, 'Cosa hai fatto bene'), h('ul', { class: 'well' }, r.wellDone.map((x) => h('li', {}, x)))));
+  out.push(h('div', { class: 'card' }, h('h2', {}, 'I tuoi errori di oggi'),
+    r.errors.length ? h('ul', { class: 'list' }, r.errors.map((e) => h('li', {}, h('span', { class: 'said' }, e.said), h('span', { class: 'better' }, e.correct), e.rule ? h('span', { class: 'muted' }, e.rule) : null)))
+      : h('p', { class: 'muted' }, 'Nessun errore importante. Ottimo lavoro.')));
+  if (r.rules.length) out.push(h('div', { class: 'card' }, h('h2', {}, 'Le regole del giorno'), h('ul', { class: 'list' }, r.rules.map((x) => h('li', {}, h('strong', {}, x.name), h('span', {}, x.summary))))));
+  if (r.words.length) out.push(h('div', { class: 'card' }, h('h2', {}, 'Parole ed espressioni nuove'), h('div', { class: 'words' }, r.words.map(wordCard))));
+  const extras = [r.sound && h('div', { class: 'row' }, h('span', { class: 'label' }, 'Pronuncia'), h('p', {}, r.sound)), r.nlp && h('div', { class: 'row' }, h('span', { class: 'label' }, 'PNL'), h('p', {}, r.nlp))].filter(Boolean);
+  if (extras.length) out.push(h('div', { class: 'card' }, ...extras));
+  return out;
+}
+function renderReport(v, rec, fresh) {
+  const r = rec.report; const lp = state.profile.lp;
+  const lpCard = h('div', { class: 'card' },
+    h('div', { class: 'card-head' }, h('h2', {}, 'Il tuo profilo aggiornato'), h('button', { class: 'link-btn', onclick: (e) => copyText(lpText(lp), e.currentTarget) }, icon('copy'), 'Copia')),
+    h('p', { class: 'muted' }, 'Oliver lo usa da solo alla prossima sessione. Puoi copiarlo anche per usarlo in un’altra chat.'),
+    h('pre', { class: 'profile' }, lpText(lp)));
+  v.replaceChildren(
+    h('div', { class: 'report-hero' },
+      h('span', { class: 'label' }, `Report · ${fmtDate(rec.endedAt)} · ${rec.minutes} min · ${modeById(rec.mode).name}`),
+      h('h1', {}, fresh ? 'Sessione completata.' : 'Report'),
+      r.nextFocus ? h('p', { style: 'font-size:1.1rem' }, h('span', { class: 'muted' }, 'Focus per la prossima volta: '), h('span', { class: 'better' }, r.nextFocus)) : null),
+    ...reportBody(r),
+    lpCard,
+    h('div', { style: 'display:flex;gap:10px;flex-wrap:wrap' },
+      h('button', { class: 'btn primary', onclick: () => { state.view = 'home'; go('home'); } }, 'Torna a Oggi'),
+      h('button', { class: 'btn ghost', onclick: () => Voice.speak([
+        r.wellDone.length && { text: 'Well done today: ' + r.wellDone.join('. '), language: 'en' },
+        r.errors.length && { text: 'Let\'s fix these: ' + r.errors.map((e) => `say "${e.correct}"`).join('; '), language: 'en' },
+        r.nextFocus && { text: 'Next time, we\'ll focus on: ' + r.nextFocus, language: 'en' },
+      ].filter(Boolean)) }, icon('speaker'), 'Ascolta il riepilogo')),
+  );
+  window.scrollTo(0, 0);
+}
+
+/* ================= Notebook ================= */
+function renderNotebook() {
+  const v = $('#v-notebook'); const ss = state.sessions;
+  const lp = state.profile.lp;
+  const review = asList(lp && lp.rulesToReview).map((x) => x.toLowerCase());
+  const errors = []; const rules = new Map(); const wordsMap = new Map();
+  for (const s of ss) {
+    const r = s.report || {};
+    for (const e of r.errors || []) errors.push({ ...e, at: s.endedAt });
+    for (const x of r.rules || []) { const k = x.name.toLowerCase(); if (!rules.has(k)) rules.set(k, { ...x, at: s.endedAt }); }
+    for (const w of r.words || []) { const k = w.term.toLowerCase(); if (!wordsMap.has(k)) wordsMap.set(k, { ...w, at: s.endedAt }); }
+  }
+  const tabs = [['errors', 'Errori', errors.length], ['rules', 'Regole', rules.size], ['words', 'Parole', wordsMap.size], ['sessions', 'Sessioni', ss.length]];
+  const seg = h('div', { class: 'seg', role: 'tablist', 'aria-label': 'Sezioni del quaderno' }, tabs.map(([id, name, n]) =>
+    h('button', { role: 'tab', 'aria-selected': state.nbTab === id ? 'true' : 'false', onclick: () => { state.nbTab = id; renderNotebook(); } }, name, h('span', { class: 'n' }, String(n)))));
+  let body;
+  const empty = (t) => h('div', { class: 'empty' }, t);
+  if (state.nbTab === 'errors') {
+    const rec = asList(lp && lp.recurringErrors);
+    body = [
+      rec.length ? h('div', { class: 'card' }, h('div', { class: 'card-head' }, h('h2', {}, 'I tuoi errori ricorrenti'), h('button', { class: 'btn primary sm', onclick: () => maybeStart('drill', '') }, 'Allenali ora')), h('ul', { class: 'list' }, rec.map((e) => h('li', {}, e)))) : null,
+      errors.length ? h('div', { class: 'card' }, h('h2', {}, 'Tutte le correzioni'), h('ul', { class: 'list' }, errors.map((e) => h('li', {}, h('span', { class: 'said' }, e.said), h('span', { class: 'better' }, e.correct), h('span', { class: 'muted', style: 'font-size:.9rem' }, (e.rule ? e.rule + ' · ' : '') + fmtDate(e.at))))))
+        : empty('Ancora nessuna correzione salvata. Fai una sessione e termina con il report: gli errori finiscono qui.'),
+    ];
+  } else if (state.nbTab === 'rules') {
+    const list = [...rules.values()];
+    body = list.length ? [h('div', { class: 'card' }, h('ul', { class: 'list' }, list.map((x) => {
+      const isRev = review.some((r) => r.includes(x.name.toLowerCase()) || x.name.toLowerCase().includes(r));
+      return h('li', {}, h('div', { style: 'display:flex;gap:8px;align-items:center;flex-wrap:wrap' }, h('strong', {}, x.name), isRev ? h('span', { class: 'pill review' }, 'da ripassare') : null),
+        h('span', {}, x.summary), h('div', {}, h('button', { class: 'link-btn', onclick: () => maybeStart('grammar', x.name) }, 'Esercitati su questa regola')));
+    })))] : [empty('Le regole spiegate nelle tue sessioni si raccolgono qui.')];
+  } else if (state.nbTab === 'words') {
+    const list = [...wordsMap.values()];
+    body = list.length ? [
+      h('div', { class: 'card-head' }, h('p', { class: 'muted' }, 'Le parole si fissano usandole. Oliver ti farà usare le ultime in una conversazione.'),
+        h('button', { class: 'btn primary sm', onclick: () => maybeStart('free', '', 'Naturally create chances for me to use these expressions, and correct how I use them: ' + list.slice(0, 10).map((w) => w.term).join(', ')) }, 'Usale in una conversazione')),
+      h('div', { class: 'words' }, list.map(wordCard))] : [empty('Le espressioni nuove che impari con Oliver finiscono qui, con esempio e pronuncia.')];
+  } else {
+    body = ss.length ? ss.map((s) => h('details', { class: 'sess' },
+      h('summary', {}, h('div', {}, h('strong', {}, modeById(s.mode).name + (s.detail ? ': ' + s.detail : '')), h('div', { class: 'muted', style: 'font-size:.88rem' }, `${fmtDate(s.endedAt)} · ${s.minutes} min · ${s.userWords || 0} parole tue`)),
+        h('span', { class: 'pill' }, ((s.report && s.report.errors) || []).length + ' correzioni')),
+      h('div', {}, ...(s.report ? reportBody(s.report) : [h('p', { class: 'muted' }, 'Nessun report.')])))) : [empty('Lo storico delle sessioni comparirà qui.')];
+  }
+  v.replaceChildren(h('div', { class: 'card-head' }, h('h1', { style: 'font-size:clamp(1.7rem,4.5vw,2.3rem);font-weight:800' }, 'Quaderno'), seg), ...[].concat(body).filter(Boolean));
+}
+
+/* ================= Profile & settings ================= */
+function renderProfile() {
+  const v = $('#v-profile'); const p = state.profile; const st = settings();
+  const level = new Set([p.level || 'unknown']); const goals = new Set(p.goals || []); const ints = new Set(p.interests || []);
+  const goalList = [...new Set([...GOALS, ...(p.goals || [])])]; const intList = [...new Set([...INTERESTS, ...(p.interests || [])])];
+  const saveAbout = () => { p.level = [...level][0]; p.goals = [...goals]; p.interests = [...ints]; saveProfile(); toast('Salvato'); };
+  const levelG = chipGroup([{ value: 'unknown', label: 'Valutami tu' }, ...LEVELS.map((l) => ({ value: l, label: l }))], level, { multi: false, onChange: saveAbout });
+  const goalG = chipGroup(goalList, goals, { onChange: saveAbout });
+  const intG = chipGroup(intList, ints, { onChange: saveAbout });
+  const wrapAdd = (list, sel, g, ph) => { const el = addInput(list, sel, g, ph); el.querySelector('button').addEventListener('click', saveAbout); el.querySelector('input').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveAbout(); }); return el; };
+  const sw = (key, title, sub) => { const id = 'set-' + key; return h('label', { class: 'switch', for: id }, h('span', { class: 't' }, h('span', {}, title), sub ? h('small', {}, sub) : null), h('input', { type: 'checkbox', class: 'toggle', id, checked: !!st[key], onchange: (e) => { setSetting(key, e.target.checked); } })); };
+  const voiceSel = h('select', { class: 'input', id: 'set-voice', style: 'width:auto', onchange: (e) => setSetting('voice', e.target.value) }, ['buttery', 'airy', 'glassy', 'rounded'].map((x) => h('option', { value: x, selected: st.voice === x }, x)));
+  const rateOut = h('span', { style: 'font-variant-numeric:tabular-nums;min-width:3ch' }, st.rate.toFixed(1) + '×');
+  const rate = h('input', { type: 'range', id: 'set-rate', min: '0.7', max: '1.3', step: '0.1', value: String(st.rate), 'aria-label': 'Velocità della voce',
+    oninput: (e) => { rateOut.textContent = Number(e.target.value).toFixed(1) + '×'; }, onchange: (e) => { const r = Number(e.target.value); setSetting('rate', r); try { Caps.tts && Caps.tts.setRate && Caps.tts.setRate(r).catch(() => {}); } catch {} } });
+  const corrSel = h('select', { class: 'input', id: 'set-corr', style: 'width:auto', onchange: (e) => setSetting('correction', e.target.value) }, Object.entries({ normal: 'Normali (max 2 per turno)', strict: 'Tutte (strict mode)', flow: 'Solo nel report (flow mode)' }).map(([k, t]) => h('option', { value: k, selected: st.correction === k }, t)));
+  const accSel = h('select', { class: 'input', id: 'set-acc', style: 'width:auto', onchange: (e) => setSetting('accurate', e.target.value === '1') }, h('option', { value: '0', selected: !st.accurate }, 'Rapide'), h('option', { value: '1', selected: st.accurate }, 'Più accurate (più lente)'));
+  const row = (title, sub, ctl) => h('div', { class: 'switch' }, h('span', { class: 't' }, h('span', {}, title), sub ? h('small', {}, sub) : null), ctl);
+  v.replaceChildren(
+    h('h1', { style: 'font-size:clamp(1.7rem,4.5vw,2.3rem);font-weight:800' }, 'Profilo'),
+    h('div', { class: 'grid-2' },
+      h('div', { class: 'card' }, h('h2', {}, 'Su di te'),
+        h('div', { class: 'field' }, h('span', {}, 'Livello'), levelG),
+        h('div', { class: 'field' }, h('span', {}, 'Obiettivi'), goalG, wrapAdd(goalList, goals, goalG, 'Altro obiettivo…')),
+        h('div', { class: 'field' }, h('span', {}, 'Interessi'), intG, wrapAdd(intList, ints, intG, 'Altro interesse…'))),
+      h('div', { class: 'card' }, h('h2', {}, 'Come lavora Oliver'),
+        h('div', {},
+          sw('voiceOn', 'Oliver parla ad alta voce', 'Legge risposta, correzioni brevi e domanda'),
+          row('Voce', null, voiceSel),
+          row('Velocità della voce', null, h('span', { style: 'display:flex;gap:10px;align-items:center' }, rate, rateOut)),
+          sw('readAll', 'Leggi anche regole e suggerimenti', 'Più completo, ma più lungo da ascoltare'),
+          sw('autoSend', 'Invia appena smetti di parlare', 'Quando fermi il microfono il messaggio parte da solo'),
+          row('Correzioni', 'Valgono dalla prossima sessione', corrSel),
+          row('Risposte', 'Le accurate ragionano di più prima di rispondere', accSel)))),
+    h('div', { class: 'card' },
+      h('div', { class: 'card-head' }, h('h2', {}, 'Il profilo che Oliver ricorda'), p.lp ? h('button', { class: 'link-btn', onclick: (e) => copyText(lpText(p.lp), e.currentTarget) }, icon('copy'), 'Copia') : null),
+      p.lp ? h('pre', { class: 'profile' }, lpText(p.lp)) : h('p', { class: 'muted' }, 'Si crea alla fine della prima sessione, con il report.')),
+    h('div', { class: 'card' },
+      h('h2', {}, 'Le istruzioni di Oliver'),
+      h('p', { class: 'muted' }, 'Questo è il prompt con cui Oliver lavora, già compilato con il tuo profilo. Puoi copiarlo e usarlo anche nella modalità vocale dell’app Claude sul telefono.'),
+      h('details', { class: 'prompt' }, h('summary', {}, 'Mostra il prompt'), h('pre', { class: 'profile' }, buildRules(null))),
+      h('div', {}, h('button', { class: 'btn ghost sm', onclick: (e) => copyText(buildRules(null), e.currentTarget) }, icon('copy'), 'Copia il prompt'))),
+    h('div', { class: 'card' },
+      h('h2', {}, 'I tuoi dati'),
+      h('p', { class: 'muted' }, Store.remote ? 'Profilo e sessioni sono salvati in privato nel tuo account: li vedi solo tu, anche da altri dispositivi.' : 'Profilo e sessioni sono salvati solo in questo browser.'),
+      h('div', {}, h('button', { class: 'btn danger sm', onclick: async () => {
+        const ok = await confirmDialog({ title: 'Cancellare tutti i dati?', text: 'Profilo, sessioni, report e parole verranno eliminati. Non si può annullare.', ok: 'Cancella tutto', danger: true });
+        if (!ok) return;
+        await Store.wipe(); state.profile = null; state.sessions = []; state.session = null; toast('Dati cancellati'); route();
+      } }, 'Cancella tutti i dati'))),
+  );
+}
+
+/* ================= Static bindings & boot ================= */
+function bindStatic() {
+  const tabDefs = { home: ['today', 'Oggi'], notebook: ['book', 'Quaderno'], profile: ['user', 'Profilo'] };
+  for (const t of document.querySelectorAll('.tab')) { const [ic, lab] = tabDefs[t.dataset.view]; t.replaceChildren(icon(ic), h('span', {}, lab)); t.addEventListener('click', () => { state.view = t.dataset.view; go(t.dataset.view); }); }
+  $('#brand').addEventListener('click', () => { if (state.profile) { state.view = 'home'; go('home'); } });
+  window.addEventListener('hashchange', () => { state.view = viewFromHash(); route(); });
+  $('#s-exit').replaceChildren(icon('back'));
+  $('#s-exit').addEventListener('click', closeSession);
+  $('#s-end').addEventListener('click', endSession);
+  $('#s-board-btn').prepend(icon('book'));
+  $('#s-board-btn').addEventListener('click', openSheet);
+  $('#send').replaceChildren(icon('send'));
+  $('#send').addEventListener('click', send);
+  $('#mic').addEventListener('click', micClick);
+  const ta = $('#input');
+  ta.addEventListener('input', () => { autosize(); syncSend(); });
+  ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); send(); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#sheet')) { e.preventDefault(); closeSheet(); } });
+  renderMic();
+}
+async function boot() {
+  bindStatic();
+  state.profile = LS.get('profile');
+  state.sessions = LS.get('sessions') || [];
+  state.session = LS.get('current');
+  route();
+  initCaps().then(() => { if (!$('#v-home').hidden) renderHome(); renderStatus(); });
+  await Store.init();
+  if (Store.remote) {
+    try {
+      const [p, cur, list] = await Promise.all([Store.getDoc('profile'), Store.getDoc('current'), Store.listSessions()]);
+      if (p) { state.profile = p; LS.set('profile', p); }
+      else if (state.profile) await Store.setDoc('profile', state.profile);
+      if (cur) { state.session = cur; LS.set('current', cur); } else if (state.session) await Store.setDoc('current', state.session);
+      state.sessions = list.length ? list : state.sessions;
+    } catch { toast('Non raggiungo i dati salvati: uso la copia su questo dispositivo.'); }
+    if ($('#v-session').hidden && state.view !== 'report') route();
+  }
+}
+boot();
+})();
+</script>
