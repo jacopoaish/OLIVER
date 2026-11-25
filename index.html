@@ -587,8 +587,9 @@ ${lpText(p.lp)}
 - If you can't understand me, ask me to rephrase before helping.
 
 ## Language: English by default, Italian only when necessary
-- ALWAYS reply in English: [REPLY], [ASK], rules, tips and explanations are all in English, even when I write or speak in Italian. Never switch to Italian on your own just to be helpful.
-- If I say I don't understand ("I don't understand", "non ho capito", "what?"), first rephrase in simpler English with an example. Use Italian only if I still don't understand after that.
+- Reply in English by default: [REPLY], [ASK], rules, tips and explanations are in English. Never switch to Italian on your own just to be helpful.
+- If I switch to Italian (I write or speak in Italian), it means I'm stuck and really need Italian: answer that point in Italian, briefly and clearly, then go straight back to English: give me the English version of what I wanted to say and invite me to say it in English. Don't correct my Italian. (Italian speech may reach you badly transcribed: interpret it generously.)
+- If I say in English that I don't understand ("I don't understand", "what?"), first rephrase in simpler English with an example. Use Italian only if I still don't understand after that.
 - For a very specific or tricky word or idiom that a simple English explanation can't make clear, you may add the Italian translation in brackets, just a few words, e.g. "a bargain (un affare)". Do this rarely.
 - If I say "come si dice..." followed by Italian, give me the English with a short example (in English) and ask me to say my full sentence again.
 - Full explanations in Italian ONLY when I explicitly ask ("spiegamelo in italiano", "in italiano"): explain that one point in Italian inside [LESSON], then go straight back to English.
@@ -717,7 +718,7 @@ function setupTts() {
 }
 
 /* ================= Voice in (dictation) ================= */
-let dictState = 'idle', autoSendPending = false, dictLangFallback = false;
+let dictState = 'idle', autoSendPending = false, dictLangFallback = false, itMic = false;
 function setupDictation() {
   const d = Caps.dictation; if (!d) return;
   d.onPartial(({ text }) => { const el = $('#s-partial'); el.hidden = !text; el.textContent = text; });
@@ -742,7 +743,7 @@ function micClick() {
   if (!d) { $('#input').focus(); toast('Qui il microfono non è disponibile: usa la dettatura della tastiera.'); return; }
   if (d.active()) { finishDictation(); return; }
   Voice.stop();
-  const p = dictLangFallback ? d.start() : d.start({ language: 'en' });
+  const p = dictLangFallback ? d.start() : d.start({ language: itMic ? 'it' : 'en' });
   p.catch((e) => {
     if (!e) return;
     if (e.code === 'not_granted') toast('Microfono non consentito: attivalo dal menu Permessi della pagina.');
@@ -954,6 +955,10 @@ function renderChips() {
   const s = state.session; const c = $('#s-chips');
   const corr = s.correction || 'normal';
   c.replaceChildren(
+    h('button', { class: 'chip', type: 'button', title: 'Il prossimo messaggio a voce lo detti in italiano', 'aria-pressed': itMic ? 'true' : 'false', onclick: () => {
+      itMic = !itMic; renderChips();
+      toast(itMic ? 'Il prossimo messaggio a voce lo detti in italiano' : 'Microfono di nuovo in inglese');
+    } }, icon('mic'), itMic ? 'Microfono: italiano' : 'Parlo in italiano'),
     h('button', { class: 'chip', type: 'button', onclick: () => quick('why?') }, icon('why'), 'Perché?'),
     h('button', { class: 'chip', type: 'button', onclick: () => quick('spiegamelo in italiano') }, icon('it'), 'In italiano'),
     h('button', { class: 'chip', type: 'button', onclick: () => quick('Can you say that again, more simply and a bit slower?') }, 'Più semplice'),
@@ -1071,6 +1076,7 @@ function send() {
   Voice.stop();
   const s = state.session;
   s.turns.push({ role: 'user', content: text });
+  if (itMic) { itMic = false; renderChips(); }
   ta.value = ''; autosize(); syncSend();
   $('#s-msgs').append(userMsg(text)); renderRatio(); saveCurrent(); scrollChat(true);
   requestTutor();
