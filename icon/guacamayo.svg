@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#151D2E"/>
+  <g transform="translate(256 256) scale(0.9) translate(-256 -256)">
+  <!-- tail -->
+  <path d="M232 296 L58 468 L84 482 L258 322 Z" fill="#1FA2FF"/>
+  <path d="M248 306 L96 492 L132 490 L270 326 Z" fill="#E3162B"/>
+  <!-- far wing -->
+  <path d="M244 262 C200 242 150 212 108 160 L140 166 L118 134 L160 150 L150 118 L190 148 L196 120 L224 168 C240 200 252 232 260 256 Z" fill="#1384D6"/>
+  <!-- body -->
+  <ellipse cx="282" cy="276" rx="88" ry="44" transform="rotate(-38 282 276)" fill="#E3162B"/>
+  <!-- near wing: red coverts, blue flight feathers -->
+  <path d="M266 254 C236 204 206 142 192 70 L216 92 L224 60 L246 94 L260 64 L274 104 L296 84 L300 132 C306 172 302 212 292 248 Z" fill="#1FA2FF"/>
+  <path d="M268 254 C254 220 248 188 252 154 C274 166 294 196 294 248 Z" fill="#E3162B"/>
+  <!-- head -->
+  <circle cx="346" cy="204" r="42" fill="#E3162B"/>
+  <ellipse cx="362" cy="204" rx="20" ry="25" fill="#FFF7EE"/>
+  <circle cx="364" cy="198" r="7" fill="#151515"/>
+  <circle cx="366" cy="196" r="2.2" fill="#FFFFFF"/>
+  <!-- beak -->
+  <path d="M378 184 C406 184 424 206 418 238 C412 226 400 220 384 222 Z" fill="#F1E8DA"/>
+  <path d="M384 222 C398 222 408 228 412 240 C400 244 388 238 382 230 Z" fill="#222222"/>
+  </g>
+</svg>
