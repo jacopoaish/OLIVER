@@ -1,4 +1,4 @@
-# Oliver Guacamaio
+# Oliver Guacamayo
 
 Tutor di inglese con cui si parla a voce. Il nome viene dal guacamayo, il pappagallo ara: l'uccello che parla. Oliver risponde come una persona vera, corregge spiegando la regola e la "trappola italiana", insegna pronuncia, abilità di conversazione e concetti di PNL, e ricorda i progressi da una sessione all'altra.
 
