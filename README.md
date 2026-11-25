@@ -1,6 +1,6 @@
-# Oliver
+# Oliver Tero
 
-Tutor di inglese con cui si parla a voce. Oliver risponde come una persona vera, corregge spiegando la regola e la "trappola italiana", insegna pronuncia, abilità di conversazione e concetti di PNL, e ricorda i progressi da una sessione all'altra.
+Tutor di inglese con cui si parla a voce. Il nome viene da *thero*, "anziano" in pali: il monaco esperto che guida gli altri. Oliver risponde come una persona vera, corregge spiegando la regola e la "trappola italiana", insegna pronuncia, abilità di conversazione e concetti di PNL, e ricorda i progressi da una sessione all'altra.
 
 App pubblicata (privata, apribile dal proprio account claude.ai): https://claude.ai/artifact/KbYTP7WGnfzG3F1VNB9q3D
 
