@@ -1,6 +1,8 @@
 # Oliver Guacamaio
 
-Tutor di inglese con cui si parla a voce. Il nome viene dal guacamayo, il pappagallo ara: l'uccello che parla. Il corso strutturato (test, livelli, ripasso) è un'app separata, **Oliver Tero**: https://claude.ai/artifact/JKnwbfHjyAXpiYZbiq75vV Oliver risponde come una persona vera, corregge spiegando la regola e la "trappola italiana", insegna pronuncia, abilità di conversazione e concetti di PNL, e ricorda i progressi da una sessione all'altra.
+Tutor di inglese con cui si parla a voce. Il nome viene dal guacamayo, il pappagallo ara: l'uccello che parla. Oliver risponde come una persona vera, corregge spiegando la regola e la "trappola italiana", insegna pronuncia, abilità di conversazione e concetti di PNL, e ricorda i progressi da una sessione all'altra.
+
+Il corso strutturato (test, livelli, ripasso) è un'app separata, **Oliver Tero**: https://claude.ai/artifact/JKnwbfHjyAXpiYZbiq75vV
 
 App pubblicata (privata, apribile dal proprio account claude.ai): https://claude.ai/artifact/KbYTP7WGnfzG3F1VNB9q3D
 
